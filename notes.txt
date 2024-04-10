@@ -1,0 +1,11 @@
+
+
+
+#########postgress docker##########
+docker run -d \
+  --name postgres \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=admin \
+  -p 5432:5432 \
+  -v /root/delta_api/data:/var/lib/postgresql/data \
+  postgres:13
