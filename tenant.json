@@ -1,0 +1,3268 @@
+{
+    "general":{
+       "created_at":"18/04/2024 13:51:01",
+       "created_by":"amir@deltasase.com",
+       "tenant_id":"112233",
+       "tenant_name":"test Tenant",
+       "customer_id":"556688",
+       "customer_name":"TEST Customer",
+       "parent":"",
+       "products":[
+          "SDWAN",
+          "SASE_RU",
+          "SASE_Branch"
+       ],
+       "licenses":{
+          "sdwan":{
+             
+          }
+       }
+    },
+    "system":{
+       "access":{
+          "administrators":{
+             "admin": {
+                "username": "admin",
+                "password_hash": "hashed_password",
+                "permissions": "full",
+                "mfa_enabled": true,
+                "allowed_addresses":["any"]
+              },
+              "operator": {
+                "username": "operator",
+                "password_hash": "hashed_password",
+                "permissions": "read-only",
+                "mfa_enabled": false,
+                "allowed_addresses":["any"]
+              }
+          },
+          "allowed_addresses":[]
+       },
+       "logging":{
+          "syslog":{
+             "address":"",
+             "port":"",
+             "protocol":"tcp",
+             "security": {
+                "tls_enabled": true,
+                "tls_certificate": "syslog-server2-cert.pem",
+                "tls_key": "syslog-server2-key.pem",
+                "ca_certificate": "ca-cert.pem"
+            },
+             "events":[]
+          },
+          "rotation":{
+ 
+          }
+       }
+    },
+    "resources":{
+       "servers":{
+          "dhcp_servers":{
+             
+          },
+          "dns_servers":{
+             "google dns":{
+                "domain_prefix":"*",
+                "address":"8.8.8.8",
+                "dnssec":{
+                   "active":false,
+                   "unsigned_check":false,
+                   "timecheck":false,
+                   "class":"",
+                   "key_tag":"",
+                   "algorythm":"",
+                   "digest_type":"",
+                   "digest":""
+                },
+                "public_key":"",
+                "tags":[]
+             }
+          },
+          "syslog_servers":{
+             
+          },
+          "mail_servers":{
+             
+          },
+          "application_servers":{
+             
+          },
+          "print_servers":{
+             
+          },
+          "collaboration_servers":{
+             
+          },
+          "ipfix_collectors":{
+             
+          },
+          "web_servers":{
+             
+          },
+          "ldap_servers":{
+             
+          },
+          "active_directories":{
+             
+          },
+          "file_servers":{
+             
+          }
+       },
+       "machine_groups":{
+          "MachineGroup1_mobiles":{
+             "machines":{
+                "Machine1":{
+                   "id":"111",
+                   "type":"",
+                   "vendor":"",
+                   "model":"",
+                   "os":"android",
+                   "serial_number":"125ffe54",
+                   "certificate":"",
+                   "admins":[""],
+                   "users":[""]
+                }
+             },
+             "machine_compliance_standard":"Default Compliance Standard"
+          },
+          "MachineGroup2_laptops":{
+             "machines":{
+                "Machine2":{
+                   "id":"2222",
+                   "model":"del 5440",
+                   "os":"win11",
+                   "serial_number":"ddd5ffde54",
+                   "certificate":"",
+                   "admins":"testadminuser",
+                   "users":"testuser"
+                }
+             },
+             "machine_compliance_standard":"Default Compliance Standard"
+          }
+       },
+       "transports":{
+          "1":"Internet",
+          "2":"MPLS1"
+       },
+       "service_providers":{
+          "Comcast":{
+             
+          },
+          "ISP2":{
+             
+          }
+       },
+       "vrfs":{
+          "LAN1":{
+             "table_id":101,
+             "rd":"65001:65558",
+             "vni":"33333"
+          }
+       }
+    },
+    "objects":{
+       "zones":{
+          "lan":{
+             "description":""
+          },
+          "internet":{
+             "description":""
+          },
+          "sdwan":{
+             "description":""
+          },
+          "sase":{
+             "description":""
+          },
+          "control":{
+             "description":""
+          },
+          "lan2":{
+             "description":""
+          }
+       },
+       "addresses":{
+          "test address subnet1":{
+             "type": "subnet",
+             "address": "2.2.2.2/30",
+             "tags": []
+          },
+             "test address":{
+             "type": "address",
+             "address": "20.2.2.2",
+             "tags": []
+          },
+          "test address range":{
+             "type": "range",
+             "address": "2.2.2.2-2.2.2.6",
+             "tags": []
+          }
+       },
+       "address groups":{
+          "test address group":{
+             "addresses": ["test address", "test address subnet1"],
+             "tags": []
+          }
+       },
+       "certificates":{ 
+          "_comment": "the certs should not be part of snapshot, but we ",
+          "delta ru ca certificate":{
+             "format":"BASE64 PEM",
+             "cert_file":"",
+             "key_file":"",
+             "secret":""
+          },
+          "dns server certificate":{
+             "format":"BASE64 PEM",
+             "cert_file":"",
+             "key_file":"",
+             "secret":""
+          }
+       },
+       "urls":{
+          "test address url":{
+             "type": "url",
+             "address": "test.com",
+             "tags": []
+          },
+          "test address url prefix":{
+             "type": "url_prefix",
+             "address": "*.test.com",
+             "tags": []
+          }
+       },
+       "url_groups":{
+          "test address group":{
+             "addresses": ["test address url", "test address url prefix"],
+             "tags": []
+          }
+       },
+       "prefix_lists":{
+          "test prefix list":{
+             "description": "",
+             "tags": [],
+             "rules": [
+                {
+                  "seq": 10,
+                  "action": "permit",
+                  "prefix": "192.168.1.0/24",
+                  "ge": 24,
+                  "le": 24
+                },
+                {
+                  "seq": 20,
+                  "action": "deny",
+                  "prefix": "192.168.2.0/24"
+                }
+             ]
+          }
+       },
+       "applications":{
+          "1":{
+             "app_name": "MyCustomApp1",
+             "app_id": "app001",
+             "app_cathegory":"web",
+             "criteria": {
+               "source_ip": "192.168.1.100",
+               "destination_ip": "192.168.2.100",
+               "urls": ["mycustomapp1.example.com"],
+               "ports": ["8080", "8081"],
+               "protocols": ["TCP", "UDP"],
+               "packet_payload": "specific_string_pattern",
+               "ssl_certificates": ["mycustomapp1_cert"],
+               "user_agents": []
+             }         
+          },
+          "2":{
+             "app_name": "MyCustomApp2",
+             "app_id": "app002",
+             "app_cathegory":"web",
+             "criteria": {
+               "source_ip": "192.168.1.100",
+               "destination_ip": "192.168.2.100",
+               "urls": ["mycustomapp1.example.com"],
+               "ports": ["8080", "8081"],
+               "protocols": ["TCP", "UDP"],
+               "packet_payload": "specific_string_pattern",
+               "ssl_certificates": ["mycustomapp1_cert"],
+               "user_agents": []
+             }         
+          }
+       }
+    },
+    "standards":{
+       "secuirty_standards": {
+          "compliance_standards":{
+             "Default Compliance Standard": {
+                "operating_system": {
+                   "type": "Windows",
+                   "version": "11",
+                   "supported_until": "2030-01-01"
+                 },
+                "security_features": {
+                   "firewall": "enabled",
+                   "antivirus": "active",
+                   "antispyware": "active",
+                   "latest_security_patches": "installed",
+                   "disk_encryption": {
+                     "enabled": true,
+                     "type": "BitLocker"
+                   }
+                 },
+                 "system_policies": {
+                   "password_policy": {
+                     "minimum_length": 8,
+                     "complexity": "high",
+                     "expiration_days": 90,
+                     "history_count": 5
+                   },
+                   "screen_lock": {
+                     "enabled": true,
+                     "timeout_seconds": 300
+                   }
+                 },
+                 "network_settings": {
+                   "vpn_required": true,
+                   "wifi_security": {
+                     "encryption_type": "WPA3"
+                   }
+                 },
+                 "hardware_compliance": {
+                   "tpm_version": "2.0",
+                   "disk_type": "SSD",
+                   "minimum_ram_gb": 8,
+                   "bios_firmware": {
+                     "version": "latest",
+                     "secure_boot_enabled": true
+                   }
+                 },
+                 "required_software": [
+                   {
+                     "name": "CompanySecurityAgent",
+                     "version": "latest"
+                   },
+                   {
+                     "name": "RemoteManagementTool",
+                     "version": "latest"
+                   }
+                 ],
+                 "user_compliance": {
+                   "mandatory_training_completed": true,
+                   "phishing_test_passed": true
+                }
+             }
+          },
+          "antivirus":{
+             "Default Antivirus Standard":{
+                "scan_engine": "real-time",
+                "scan_type": "full-scan",
+                "action_on_detection": {
+                  "default_action": "block",
+                  "notification": "log_event",
+                  "secondary_action": "quarantine"
+                },
+                "update_settings": {
+                  "update_interval": "hourly",
+                  "update_source": "official_vendor_site",
+                  "automatic_updates": true
+                },
+                "exclusions": {
+                  "file_types": [".txt", ".jpg"],
+                  "applications": ["trusted_app"]
+                }
+             }
+          },
+          "dlp": {
+             "Default DLP Standard":{
+                "enabled": true,
+                "content_inspection": {
+                   "deep_inspection": true,
+                   "data_types": ["credit_cards", "social_security_numbers", "confidential_emails"],
+                   "actions": {
+                      "on_detection": ["alert", "quarantine", "block"],
+                      "exceptions": [
+                         {
+                         "user_groups": ["executive_team"],
+                         "action": "log_only"
+                         }
+                      ]
+                }
+                },
+                "network_protection": {
+                   "protocols": ["http", "https", "ftp"],
+                   "inspect_encrypted_traffic": true
+                },
+                "endpoint_protection": {
+                   "monitor_clipboard_content": true,
+                   "block_sensitive_data_transfer": ["usb", "bluetooth", "email"]
+                },
+                "storage_protection": {
+                   "cloud_storage": ["Google Drive", "Dropbox"],
+                   "actions": ["encrypt", "block"]
+                }
+             }
+          },
+          "ids_ips":{
+             "Default IDS Standard":{
+                "enabled": true,
+                "signature_based_detection": {
+                  "update_interval": "daily",
+                  "signatures": [
+                    {
+                      "id": "2001",
+                      "name": "SQL Injection Attempt",
+                      "severity": "high",
+                      "action": "alert_and_block"
+                    }
+                  ]
+                },
+                "anomaly_based_detection": {
+                  "enabled": true,
+                  "threshold": 5,
+                  "actions": ["alert_admin", "restrict_access"]
+                },
+                "automated_response": {
+                  "rules": [
+                    {
+                      "trigger": "high_severity_alert",
+                      "actions": ["isolate_infected_system", "initiate_scan", "notify_security_team"]
+                    },
+                    {
+                      "trigger": "repeated_login_failures",
+                      "actions": ["temporary_account_lock", "alert_user_and_admin"]
+                    }
+                  ]
+                },
+                "integration": {
+                  "with_siem": true,
+                  "with_ticketing_system": true
+                }
+             }
+          },
+          "ssl":{
+             "Default SSL Standard":{
+                "decryption_policy": "selective",
+                "targets": [
+                  {
+                    "domain": "example.com",
+                    "action": "decrypt"
+                  },
+                  {
+                    "domain": "sensitivebanking.com",
+                    "action": "no-decrypt"
+                  }
+                ],
+                "certificate_handling": {
+                  "trust_known_certificates": true,
+                  "inspect_untrusted_certificates": true
+                },
+                "exclusions": {
+                  "categories": ["financial", "health"]
+                }
+             }
+          },
+          "inspection":{
+             "actions": {
+                "malware": "block",
+                "protocol_anomalies": "alert",
+                "file_type_mismatch": "block"
+              },
+              "content_inspection": {
+                "enabled": true,
+                "rules": [
+                  {
+                    "content_type": "executable_files",
+                    "action": "scan"
+                  },
+                  {
+                    "content_type": "multimedia_files",
+                    "action": "log"
+                  }
+                ]
+              },
+              "deep_inspection": {
+                "enabled": true,
+                "byte_limit": 5000000,
+                "time_limit": 10
+              }
+          },
+          "malware":{
+             "Default Malware Protection Standard":{
+                "sandboxing": {
+                   "enabled": true,
+                   "action_on_detection": {
+                       "block": true,
+                       "quarantine": true,
+                       "notify_admin": true
+                   },
+                   "analysis_servers": [
+                       {
+                           "ip_address": "10.10.10.10",
+                           "port": 443,
+                           "protocol": "HTTPS"
+                       },
+                       {
+                           "ip_address": "10.10.10.11",
+                           "port": 443,
+                           "protocol": "HTTPS"
+                       }
+                   ]
+               },
+               "behavioral_analysis": {
+                   "enabled": true,
+                   "action_on_detection": {
+                       "alert": true,
+                       "kill_process": true,
+                       "notify_user": true
+                   },
+                   "analysis_engine": {
+                       "ip_address": "10.10.20.10",
+                       "port": 8080,
+                       "protocol": "HTTP"
+                   }
+                }
+             }
+          }
+       },
+       "service_standards":{
+          "dns_service":{
+             "dns standard 1":{
+                "active":true,
+                "caching":true,
+                "port":"53",
+                "interface_tags":[
+                   "dns_listen"
+                ],
+                "certificate":{
+                   "public_key":"",
+                   "private_key":"",
+                   "trusted_ca":""
+                },
+                "forwarding_servers": {
+                   "1": {
+                      "domain_prefix": "*.test.com",
+                      "address": "8.8.8.8",
+                      "dnssec": {
+                        "active": true,
+                        "unsigned_check": false, 
+                        "timecheck": false,      
+                        "class": "IN",           
+                        "key_tag": "12345",      
+                        "algorithm": "RSASHA256",
+                        "digest_type": "2",      
+                        "digest": "digest_value" 
+                      },
+                     "public_key": "server_public_key.pem", 
+                     "tag": "primary_server",               
+                      "source_address_tag":"dns_forward",
+                      "source_interface_tag":"dns_forward",
+                      "server": "dns_server_name" 
+                   }
+                },
+                "cache_size": "4096",
+                "max_ttl": "86400",      
+                "min_ttl": "3600",       
+                "neg_ttl": "300",        
+                "max_entries": "10000",  
+                "logging": "enabled",   
+                "static_entries":{
+                   "test.net":"15.2.2.4"
+                }
+             }
+          },
+          "dhcp_server":{
+             "Test DHCP Server Standard":{
+                "enabled": true,
+                "start_count": 5,
+                "end_count": 10,
+                "default_lease_time": 3600,
+                "max_lease_time": 7200,
+                "domain_name": "localdomain",
+                "dns_servers": ["172.16.100.10", "8.8.8.8"],
+                "ntp_servers": ["time.google.com"],
+                "options": {
+                   "option_150": ["172.16.100.10"],
+                   "custom_option_1": {
+                       "code": 160,
+                       "data": "custom_data",
+                       "type": "string"
+                   }
+                },
+                "win_servers": ["172.16.100.15"],
+                "netbios_name_servers": ["172.16.100.15"],
+                "netbios_node_type": 2
+             }
+          },
+          "dhcp_relay":{
+             "Test DHCP Relay Standard":{
+                "enabled": true,
+                "relay_ip": ["172.31.1.1", "172.31.2.1"],
+                "source_interface": "self",
+                "options":{
+                   "option_82": true
+                },
+                "giaddr_policy": "preserve",
+                "rate_limit":""
+             }
+          }
+       },
+       "system_standards":{
+          "syslog_standard":{
+             "Test Syslog_config": {
+                "enabled": true,
+                "servers": [
+                  {
+                    "ip_address": "192.168.100.106",
+                    "port": 514,
+                    "transport_protocol": "UDP",
+                    "facility": "local4",
+                    "severity": "info",
+                    "security": {
+                      "tls_enabled": true,
+                      "tls_certificate": "/etc/ssl/certs/syslog-server-cert.pem",
+                      "tls_key": "/etc/ssl/private/syslog-server-key.pem",
+                      "ca_certificate": "/etc/ssl/certs/ca-cert.pem"
+                      }
+                  }
+                ]
+             }
+          },
+          "ipfix_standard":{
+             "Default IPFIX config": {
+                "enabled": true,
+                "export_interval": 60,
+                "collector": {
+                  "ip_address": "192.168.100.101",
+                  "port": 4739,
+                  "transport_protocol": "UDP"
+                },
+                "interfaces":[],
+                "template_refresh_time": 600,
+                "option_template": true,
+                "record_fields": [
+                  "sourceIPv4Address",
+                  "destinationIPv4Address",
+                  "sourceTransportPort",
+                  "destinationTransportPort",
+                  "protocolIdentifier",
+                  "packetDeltaCount",
+                  "octetDeltaCount",
+                  "flowStartSysUpTime",
+                  "flowEndSysUpTime"
+                ]
+             }
+          },
+          "snmp_standard":{
+             "SNMPv3_config": {
+                "enabled": true,
+                "users": [
+                  {
+                    "username": "adminUser",
+                    "authentication_protocol": "SHA",
+                    "authentication_password": "authPassword",
+                    "encryption_protocol": "AES",
+                    "encryption_password": "encPassword",
+                    "security_level": "authPriv"
+                  }
+                ],
+                "trap_receiver": {
+                  "ip_address": "192.168.100.105",
+                  "port": 162
+                },
+                "engine_id": "800000A1030000E112345678",
+                "contact": "network.admin@example.com",
+                "location": "Headquarters"
+             },
+             "SNMP_config": {
+                "enabled": true,
+                "version": "v2c",
+                "community_string": "public",
+                "trap_receiver": {
+                  "ip_address": "192.168.100.102",
+                  "port": 162
+                },
+                "authentication_traps": true,
+                "contact": "network.admin@example.com",
+                "location": "Data Center 1"
+              }
+          },
+          "ntp_standard":{
+             "default NTP Standard":{
+                "10": {
+                   "address": "time.google.com",
+                   "version": "4",
+                   "auth_key": "",
+                   "max_poll": "10",
+                   "min_poll": "6"
+               },
+               "11": {
+                   "address": "time2.google.com",
+                   "version": "4",
+                   "auth_key": "",
+                   "max_poll": "10",
+                   "min_poll": "6"
+               }
+             }
+          }
+       },
+       "network_standards":{
+          "sla_standard":{
+             "Default SLA Standard":{
+                "id":123123123,
+                "description":"",
+                "interval":"",
+                "threshold":"",
+                "wait_time":"",
+                "loss":"",
+                "jitter":"",
+                "Mos":"",
+                "tags":[]
+             },
+             "Internet SLA Standard":{
+                "description":"",
+                "interval":"",
+                "threshold":"",
+                "wait_time":"",
+                "loss":"",
+                "jitter":"",
+                "Mos":"",
+                "tags":[]
+             }
+          },
+          "underlay_standard":{
+             "ISP1": {
+                "description":"",
+                "up_bw":10,
+                "down_bw":50,
+                "shaping":true,
+                "metered":false,
+                "tags":[],
+                "transport":"1",
+                "sla_target":"",
+                "sla_standard":""
+             },
+             "LTE/5G": {
+                "description":"",
+                "up_bw":10,
+                "down_bw":50,
+                "shaping":true,
+                "metered":true,
+                "tags":[],
+                "transport":"1",
+                "sla_target":"",
+                "sla_standard":""
+             }
+          },
+          "ike_standard":{
+             "IKE proposal 1": {
+                "version": "2",
+                "authentication_method": "pre-shared-key",
+                "psk": "mySecretKey",
+                "random_psk": false,
+                "local_identity": "local@deltasase.com",
+                "remote_identity": "remote@deltasase.com",
+                "dh_group": "group20",
+                "encryption_algorithm": "aes-256",
+                "hash_algorithm": "sha256",
+                "lifetime_seconds": 86400,
+                "mobike":false,
+                "nat_t":true
+             }
+          },
+          "ipsec_standard":{
+             "IPsec template 1": {
+                "encryption_algorithm": "aes-256",
+                "integrity_algorithm": "sha1",
+                "dh_group": "group2",
+                "pfs_group": "group2",
+                "lifetime_seconds": 3600,
+                "lifetime_kilobytes": 50000
+             }
+          }
+       }
+    },
+    "policies":{
+       "secuirty_policies":{
+          "default policy":{
+             "seq": 1,
+             "match":{
+                "source_zones": ["internal"],
+                "destination_zones": ["external"],
+                "source_addresses": ["any"],
+                "destination_addresses": ["any"],
+                "applications": ["http", "https"],
+                "services": ["service-http", "service-https"],
+                "source_users": ["any"],
+                "source_ports": ["any"],
+                "destination_ports": ["80", "443"],
+                "session_tags": ["business"]
+             },
+             "action": {
+                "permit": {
+                   "inspect": "Default DPI Standard",
+                   "antivirus": "Default Antivirus Standard",
+                   "ips_ids": "Default IDS/IPS Standard",
+                   "dlp": "Default DLP Standard",
+                   "ssl": "Default SSL Standard"
+                },
+                "logging":{
+                   "action":"start and end",
+                   "logging_standard":""
+                }
+             }
+          }
+       },
+       "qos policies":{
+          
+       },
+       "route policies":{
+          
+       },
+       "nat policies":{
+          
+       },
+       "incident policies":{
+          
+       },
+       "vpn policies":{
+          "test vpn policy":{
+             
+          }
+       },
+       "authentication_policies":{
+          "Default Auth policy":{
+             "active":true,
+             "1":{
+                "type":"ldap",
+                "remote":"LDAP1",
+                "2fa":false
+             },
+             "2":{
+                "type":"sso",
+                "remote":"Azure AD",
+                "2fa":false
+             },
+             "3":{
+                "type":"local",
+                "2fa":true
+             }
+          }
+       }
+    },
+    "authentication":{
+       "service_users":{
+          "secuirty_cameras": {
+            "username": "cameras",
+            "groups": ["security"],
+            "enabled": true,
+            "addresses":["any"]
+          },
+          "secuirty_doors": {
+            "username": "doors",
+            "groups": ["security"],
+            "enabled": true,
+            "addresses":["any"]
+          }
+       },
+       "local_users":{
+          "user1": {
+            "username": "user1",
+            "password_hash": "hashed_password",
+            "groups": ["group1"],
+            "mfa_enabled": true,
+            "enabled": true,
+            "allowed_addresses":["any"]
+          },
+          "user2": {
+             "username": "user2",
+             "password_hash": "hashed_password",
+             "groups": ["group1", "group2"],
+             "mfa_enabled": true,
+             "enabled": true,
+             "allowed_addresses":["any"]
+          }
+       },
+       "user_groups":{
+          "IT_staff": {
+            "access_level": "vpn",
+            "vpn_access": true,
+            "ztna_access": true
+          },
+          "regular_users": {
+            "access_level": "user",
+            "vpn_access": false,
+            "ztna_access": true
+          }
+       },
+       "remote_users":{
+          "user_group_mapping":{
+             "LDAP Mapping":{
+                "cn=IT_staff,ou=groups,dc=yourdomain,dc=com": "IT_staff",
+                "cn=regular_users,ou=groups,dc=yourdomain,dc=com": "regular_users",
+                "cn=engineering,ou=groups,dc=yourdomain,dc=com": "engineering_team",
+                "cn=hr_department,ou=groups,dc=yourdomain,dc=com": "HR_staff"
+             },
+             "SSO Group mapping": {
+                "sso_group_id_admin": "IT_staff",
+                "sso_group_id_users": "regular_users",
+                "sso_group_id_engineers": "engineering_team",
+                "sso_group_id_hr": "HR_staff"
+             }
+          },
+          "sso":{
+             "Okta":{
+                "provider": "OKTA",
+                "client_id": "your_okta_client_id",
+                "client_secret": "your_okta_client_secret",
+                "redirect_uri": "https://yourcallbackurl.com/callback",
+                "scopes": ["openid", "profile", "email"],
+                "authorization_endpoint": "https://yourdomain.okta.com/oauth2/default/v1/authorize",
+                "token_endpoint": "https://yourdomain.okta.com/oauth2/default/v1/token",
+                "userinfo_endpoint": "https://yourdomain.okta.com/oauth2/default/v1/userinfo"
+             },
+             "Azure AD":{
+                "provider": "AzureAD",
+                "client_id": "client_id_here",
+                "client_secret": "client_secret_here",
+                "redirect_uri": "https://yourcallbackurl.com",
+                "scopes": ["openid", "profile", "email"],
+                "token_endpoint": "https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token"       
+             }
+          },
+          "ldap":{
+             "LDAP1":{
+                "server": "ldap.yourdomain.com",
+                "port": 389,
+                "use_ssl": true,
+                "start_tls": false,
+                "connection_timeout": 30,
+                "failover_servers": [
+                  "ldap2.yourdomain.com",
+                  "ldap3.yourdomain.com"
+                ],
+                "base_dn": "dc=yourdomain,dc=com",
+                "bind_dn": "cn=admin,dc=yourdomain,dc=com",
+                "bind_password": "bind_password_here",
+                "user_search_base": "ou=users,dc=yourdomain,dc=com",
+                "user_search_filter": "(uid={username})",
+                "group_search_base": "ou=groups,dc=yourdomain,dc=com",
+                "group_search_filter": "(member={dn})",
+                "attribute_mapping": {
+                  "email": "mail",
+                  "name": "cn"
+                }
+             }
+          }
+       },
+       "2fa":{
+          "sms":{},
+          "email":{},
+          "app":{}
+       }
+    },
+    "sase":{
+       "cloud_settings":{
+          "subnet":"10.1.0.0/22",
+          "bgp asn":"65500"
+       },
+       "agent":{
+          "agent_Standards":{
+             "default":{
+                "authentication":"Default Authentication Policy",
+                "authentication_timeout":"6000",
+                "machine_groups":["any"],
+                "users":["any"],
+                "user_groups":["any"],
+                "compliance":true,
+                "settings":{
+                   "active":true,
+                   "secure_network_detection":{},
+                   "manage_certificates":true,
+                   "os_credentials":true,
+                   "connect_type":"auto",
+                   "tunnel_type": {
+                      "1":"ipsec",
+                      "2":"ssl"
+                   },
+                   "split_tunnel":{
+                      "enabled":true,
+                      "match":{
+                         "destination_ips":[],
+                         "destination_urls":[],
+                         "applications":[]
+                      }
+                   },
+                   "disable_agent":{
+                      "users":[],
+                      "secret":"testsecret",
+                      "duration":"10",
+                      "reason_required":true
+                   },
+                   "secuirty_policy":"Agent Default Security Policy"
+                }
+             }
+          }
+       },
+       "application_standard":"Default App Standard",
+       "services":{
+          "ingress":{
+             "test ingress":{
+                "id":"2234411232131",
+                "public_ip":"3.2.55.1",
+                "public_port":"443",
+                "private_pool":["10.10.1.1"],
+                "private_port":"443",
+                "source_nat":true,
+                "security_policy":"test security policy",
+                "up_bw":100,
+                "down_bw":100
+             }
+          },
+          "remote_vpn":{
+             "global_pools":[
+                "172.16.0.0/23",
+                "172.16.8.0/23"
+             ],
+             "portal":{
+                "url": "test.vpn.deltasase.com",
+                "public_ip":"5.2.56.5",
+                "certificte_url":""
+             },
+             "ipsec":{
+                "ike_standard": "default IKE standard",
+                "ipsec_standard": "default IPSEC standard",
+                "key_refresh_rate":"8"
+             },
+             "policies":{
+                "security":"default remote VPN Security policy",
+                "qos":"default remote VPN QoS policy"
+             },
+             "regions":{
+                "us-east-01":{
+                   "pools":[],
+                   "bandwidth":"500",
+                   "dedicated":false,
+                   "bgp_communities":["65001:120", "no-export"]
+                },
+                "us-west-01":{
+                   "pools":[],
+                   "bandwidth":"500",
+                   "dedicated":false,
+                   "bgp_communities":["65001:220", "no-export"]
+                }
+             }
+          },
+          "remote_sites":{
+             "security policy":"test security policy",
+             "qos policy":"test qos policy",
+             "up_bw":1000,
+             "down_bw":1000,
+             "sites":{
+                "site1":{
+                   "id":"111",
+                   "sdwan":true,
+                   "ipsec":{
+                      "1213554884845":{
+                         "ike_standard": "IKE proposal 1",
+                         "ipsec_standard": "IPSEC proposal 1",
+                         "ike":{
+                            "version": "2",
+                            "authentication_method": "certificates",
+                            "local_certificate": "localCert.pem",
+                            "remote_certificate": "remoteCert.pem",
+                            "local_identity": "local@deltasase.com",
+                            "remote_identity": "remote@deltasase.com",
+                            "dh_group": "group20",
+                            "encryption_algorithm": "aes-256",
+                            "hash_algorithm": "sha256",
+                            "lifetime_seconds": 86400,
+                            "mobike": false,
+                            "nat_t": true
+                         },
+                         "ipsec":{
+                            "ipsec_proposal": [
+                               {
+                                 "encryption_algorithm": "aes-256",
+                                 "integrity_algorithm": "sha1",
+                                 "dh_group": "group2"
+                               }
+                             ],
+                             "pfs_group": "group2",
+                             "lifetime_seconds": 3600,
+                             "lifetime_kilobytes": 50000
+                         },
+                         "underlay id":"235232121344345435"
+                      }
+                   },
+                   "routing":{
+                      "default":{
+                         "static":{
+                         
+                         },
+                         "bgp":{
+                            "ecmp":false,
+                            "peers":{
+                               "asn":"64500",
+                               "route map":{
+                                  "in":"BGP test route map",
+                                  "out": ""
+                               }
+                            },
+                            "route_maps":{
+                               "BGP test route map":{
+                                  "standard_route_map":"",
+                                  "10":{
+                                     "match":{
+                                        "prefix_list":"",
+                                        "asn_regex":"",
+                                        "community":""
+                                     },
+                                     "action":{
+                                        "permit":true,
+                                        "community":{
+                                           "type":"add",
+                                           "value":"65001:2252"
+                                        },
+                                        "as_path":{
+                                           "overide":false,
+                                           "prepend_count":"",
+                                           "prepend_asn":""
+                                        },
+                                        "weight":"",
+                                        "local_pref":""
+                                     }
+                                  }
+                               }
+                            }
+                         }
+                      }
+                   }
+                }
+             }
+          },
+          "casb": {
+             "enabled": true,
+             "traffic_monitoring": true,
+             "cloud_discovery": {
+                "report_unauthorized_usage": true,
+                "data_sources": ["firewall_logs", "proxy_logs", "endpoint_security_logs"]
+             },
+             "data_loss_prevention": {
+                "enabled": true,
+                "policies": [
+                {
+                   "policy_name": "Protect Sensitive Data",
+                   "data_types": ["PII", "PCI", "PHI"],
+                   "actions": ["alert", "block", "encrypt"]
+                }
+                ]
+             },
+             "threat_protection": {
+               "anomaly_detection": {
+                "enabled": true,
+                "behaviors": ["unusual_download", "unusual_access_patterns"],
+                "response_actions": ["alert_admin", "block_user"]
+                }
+             },
+             "access_control": {
+               "enforce_access_policies": true,
+               "policies": [
+                   {
+                   "user_group": "engineering",
+                   "applications": ["AWS", "Azure"],
+                   "access_level": "restricted"
+                   }
+                ]
+             },
+             "encryption": {
+               "at_rest": true,
+               "in_transit": true
+             }
+          }      
+       }
+    },
+    "sdwan":{
+       "transports":{
+          "1":"Internet",
+          "2":"MPLS1"
+       },
+       "providers":{
+          "1":"ISP1",
+          "2":"ISP2"
+       },
+       "hubs":{
+          "hub1":{
+             "id":"11111",
+             "address":{
+                
+             },
+             "tags":[
+                
+             ],
+             "policies":{
+                "qos":{
+                   "slot1":"", 
+                   "slot2":"local qos policy 1", 
+                   "slot3":"qos policy 1", 
+                   "slot4":"default qos policy"
+                },
+                "security": {
+                   "slot1":"", 
+                   "slot2":"local security policy 1", 
+                   "slot3":"security policy 1", 
+                   "slot4":"default security policy"
+                },
+                "traffic": {
+                   "slot1":"", 
+                   "slot2":"local traffic policy 1", 
+                   "slot3":"traffic policy 1", 
+                   "slot4":"default traffic policy"
+                },
+                "nat":{
+                   "slot1":"", 
+                   "slot2":"local nat policy 1", 
+                   "slot3":"nat policy 1", 
+                   "slot4":"default nat policy"
+                }
+             },
+             "underlays":{
+                "circuit1":{
+                   "id":"112121211",
+                   "description":"",
+                   "up_bw":10,
+                   "down_bw":50,
+                   "shaping":true,
+                   "metered":false,
+                   "sla":{
+                      "target":"8.8.8.8",
+                      "sla_standard":""
+                   },
+                   "underlay_standard":"",
+                   "service_provider":"ISP1"
+                }
+             },
+             "cluster":{
+                "subnet":"192.168.5.0/24",
+                "keepalive_interval":"1000",
+                "failiure_count":"3",
+                "hold_time":"5"
+             },
+             "devices":{
+                "hub1 device 1":{
+                   "id":"212325344322534",
+                   "software_version":"1.1.2",
+                   "hardware":{
+                      "serial_number":"efwe223234324",
+                      "model":"SEO1000",
+                      "ports":[
+                         "mgmt",
+                         "1",
+                         "2",
+                         "3",
+                         "4",
+                         "5"
+                      ]
+                   },
+                   "vlans":{
+                      "1":"TEST VLAN",
+                      "2":"Test VLAN2"
+                   },
+                   "interfaces":{
+                      "1":{
+                         "type":"port",
+                         "role":"internet",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"",
+                         "vlan":"",
+                         "underlay":"circuit1",
+                         "ipv4":{
+                            "address":"50.2.11.10/24",
+                            "gw":"50.2.11.1"
+                         },
+                         "ipv6":{
+                            
+                         }
+                      },
+                      "bond1":{
+                         "type":"bond",
+                         "bond_members":[
+                            "5"
+                         ],
+                         "bond_mode":"active",
+                         "role":"lan",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"lan",
+                         "vlan":"",
+                         "underlay":"circuit1",
+                         "ipv4":{
+                            "primary":{
+                               "address":"172.16.100.10/24"
+                            },
+                            "secondary":{
+                               
+                            }
+                         },
+                         "ipv6":{
+                            "primary":{
+                               
+                            },
+                            "secondary":{
+                               
+                            }
+                         },
+                         "vrf": "lan"
+                      },
+                      "mgmt":{
+                         "type":"port",
+                         "role":"mgmt",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"mgmt",
+                         "vlan":"",
+                         "ipv4":{
+                            "address":"192.168.100.10/24",
+                            "gw":"192.168.100.1"
+                         },
+                         "ipv6":{
+                            
+                         }
+                      },
+                      "cluster_bond":{
+                         "type":"bond",
+                         "bond_members":[
+                            "5"
+                         ],
+                         "bond_mode":"active",
+                         "role":"ha",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"ha",
+                         "vlan":"1",
+                         "ipv4":{
+                            "address":"169.254.5.1/24"
+                         }
+                      },
+                      "tunnel1":{
+                         "type":"tunnel",
+                         "protocol":"ipsec",
+                         "role":"lan",
+                         "tags":[
+                            
+                         ],
+                         "description":"test tunnel, for example tunnel to firewall in azure handoff",
+                         "mac":"",
+                         "zone":"lan",
+                         "vlan":"",
+                         "source_interface":"1",
+                         "source_address":"192.168.1.1",
+                         "remote_address":"1.2.2.2",
+                         "ike":{
+                            "ike_standard":"",
+                            "version": "2",
+                            "authentication_method": "pre-shared-key",
+                            "psk": "mySecretKey",
+                            "local_identity": "local@deltasase.com",
+                            "remote_identity": "remote@deltasase.com",
+                            "dh_group": "group20",
+                            "encryption_algorithm": "aes-256",
+                            "hash_algorithm": "sha256",
+                            "lifetime_seconds": 86400,
+                            "mobike":false,
+                            "nat_t":true
+                         },
+                         "ipsec":{
+                            "ipsec_standard": "IPsec template 1",
+                            "ipsec_proposal": [
+ 
+                            ],
+                            "pfs_group": "group2",
+                            "lifetime_seconds": 3600,
+                            "lifetime_kilobytes": 50000
+                         },
+                         "ipv4":{
+                            "primary":{
+                               "address":"169.254.15.1/31"
+                            },
+                            "secondary":{
+                               
+                            }
+                         },
+                         "ipv6":{
+                            "primary":{
+                               
+                            },
+                            "secondary":{
+                               
+                            }
+                         },
+                         "vrf": "lan"
+                      }
+                   },
+                   "cluster":{
+                      "interface":"bond2",
+                      "track":{
+                         "interfaces":{
+                            "bond1":{
+                               "flap_rate":"10",
+                               "reduce_priority":"50"
+                            }
+                         },
+                         "prob":{
+                            "prob1":{
+                               "target":"8.8.8.8",
+                               "source_address":"",
+                               "source_interface":"",
+                               "sla_standard":"test sla profile"
+                            }
+                         }
+                      }
+                   },
+                   "system":{
+                      "authentication":{
+                         "users":{
+                            "delta_admin":{
+                               "key":"<<RSA KEY>>",
+                               "password":"",
+                               "role":"superadmin"
+                            }
+                         },
+                         "roles":{
+                            
+                         }
+                      },
+                      "session":{
+                         "table_size":"2048",
+                         "ttl":"600",
+                         "tcp":{
+                            
+                         },
+                         "udp":{
+                            
+                         },
+                         "icmp":{
+                            
+                         },
+                         "rtp":{
+                            
+                         }
+                      },
+                      "ssh":{
+                         "interfaces":[
+                            "bond1"
+                         ],
+                         "allowed_addresses":[
+                            "172.16.1.2"
+                         ]
+                      },
+                      "snmp_polling":{
+                         "v2":{
+                            "community":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "v3":{
+                            "username":"",
+                            "password":"",
+                            "auth_algorytm":"",
+                            "encrypt_algorytim":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         }
+                      },
+                      "snmp_trap":{
+                         "v2":{
+                            "community":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "v3":{
+                            "username":"",
+                            "password":"",
+                            "auth_algorytm":"",
+                            "encrypt_algorytim":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "snmp_server":""
+                      },
+                      "certificates":{
+                         "ca":{
+                            
+                         },
+                         "machine":{
+                            
+                         }
+                      },
+                      "ipfix":{
+                         
+                      },
+                      "syslog":{
+                         "1":{
+                            "name":"test syslog",
+                            "address":"",
+                            "protocol":"udp",
+                            "port":"514",
+                            "severity":"",
+                            "syslog_standard":"",
+                            "security": {
+                               "tls_enabled": true,
+                               "tls_certificate": "/etc/ssl/certs/syslog-server-cert.pem",
+                               "tls_key": "/etc/ssl/private/syslog-server-key.pem",
+                               "ca_certificate": "/etc/ssl/certs/ca-cert.pem"
+                            }
+                         }
+                      },
+                      "timezone":"est",
+                      "domain":"deltasase.com",
+                      "ntp":{
+                         "1":{
+                            "address":"",
+                            "source_interface":"",
+                            "source_address":"",
+                            "max_poll":"",
+                            "min_poll":""
+                         }
+                      },
+                      "dns":{
+                         "1":{
+                            "address":"8.8.8.8",
+                            "authentiction":""
+                         },
+                         "2":{
+                            "address":"8.8.8.8",
+                            "authentiction":""
+                         }
+                      },
+                      "advance":{
+                         "dpdk":{
+                            
+                         },
+                         "vpp":{
+                            
+                         },
+                         "sswan":{
+                            
+                         }
+                      }
+                   },
+                   "automation":{
+                      "scheduled_tasks":{
+                         "task1":{
+                            "schedule":{
+                               "start time":"14:20:00",
+                               "start date":"04/19/2024",
+                               "interval":24
+                            },
+                            "script":"/etc/scripts/test.py"
+                         }
+                      },
+                      "event_handler":{
+                         "event1":{
+                            "event_type":{
+                               
+                            },
+                            "script":"/etc/scripts/event_test.py"
+                         }
+                      }
+                   },
+                   "protocols":{
+                      "vrfs":{
+                         "LAN1":{
+                            "table_id":201,
+                            "static routes":{
+                               "1":{
+                                  "destination":"10.0.0.0/16",
+                                  "next_hop":"",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"10.0.8.8",
+                                     "sla_standard":""
+                                  }
+                               }
+                            },
+                            "bgp":{
+                               
+                            },
+                            "ospf":{
+                               
+                            },
+                            "isis":{
+                               
+                            },
+                            "multicast":{
+                               
+                            },
+                            "arp":{
+                               
+                            }
+                         },
+                         "Inet1":{
+                            "table_id":201,
+                            "static routes":{
+                               "1":{
+                                  "destination":"0.0.0.0/0",
+                                  "next_hop":"50.1.1.1",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"8.8.8.8",
+                                     "sla_standard":"Internet SLA"
+                                  }
+                               }
+                            },
+                            "bgp":{
+                               
+                            },
+                            "ospf":{
+                               
+                            },
+                            "isis":{
+                               
+                            },
+                            "multicast":{
+                               
+                            },
+                            "arp":{
+                               
+                            }
+                         },
+                         "management":{
+                            "table_id":99,
+                            "static routes":{
+                               "1":{
+                                  "destination":"0.0.0.0/0",
+                                  "next_hop":"50.1.1.1",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"8.8.8.8",
+                                     "sla_standard":"Internet SLA"
+                                  }
+                               }
+                            }
+                         }
+                      }
+                   }
+                },
+                "hub1 device 2":{
+                   "id":"2123253443534",
+                   "software_version":"1.1.2",
+                   "hardware":{
+                      "serial_number":"efwe223234324",
+                      "model":"SEO1000",
+                      "ports":[
+                         "mgmt",
+                         "1",
+                         "2",
+                         "3",
+                         "4",
+                         "5"
+                      ]
+                   },
+                   "vlans":{
+                      "1":"TEST VLAN",
+                      "2":"Test VLAN2"
+                   },
+                   "interfaces":{
+                      "1":{
+                         "type":"port",
+                         "role":"internet",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"",
+                         "vlan":"",
+                         "underlay":"circuit1",
+                         "ipv4":{
+                            "address":"50.2.11.10/24",
+                            "gw":"50.2.11.1"
+                         },
+                         "ipv6":{
+                            
+                         },
+                         "ha_mirror":true
+                      },
+                      "bond1":{
+                         "type":"bond",
+                         "bond_members":[
+                            "5"
+                         ],
+                         "bond_mode":"active",
+                         "role":"lan",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"",
+                         "vlan":"",
+                         "underlay":"circuit1",
+                         "ipv4":{
+                            "primary":{
+                               "address":"172.16.100.10/24"
+                            },
+                            "secondary":{
+                               
+                            }
+                         },
+                         "ipv6":{
+                            "primary":{
+                               
+                            },
+                            "secondary":{
+                               
+                            }
+                         },
+                         "dhcp":{
+                            "dhcp_relay":{
+                               
+                            },
+                            "dhcp_server":{
+                               
+                            }
+                         },
+                         "ha_mirror":true
+                      },
+                      "mgmt":{
+                         "type":"port",
+                         "role":"mgmt",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"mgmt",
+                         "vlan":"",
+                         "ipv4":{
+                            "address":"192.168.100.10/24",
+                            "gw":"192.168.100.1"
+                         },
+                         "ipv6":{
+                            
+                         }
+                      },
+                      "ha_bond":{
+                         "type":"bond",
+                         "bond_members":[
+                            "5"
+                         ],
+                         "bond_mode":"active",
+                         "role":"ha",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"ha",
+                         "vlan":"1",
+                         "ipv4":{
+                            "address":"169.254.1.0/31"
+                         }
+                      }
+                   },
+                   "ha":{
+                      "pririty":90,
+                      "ha_interface":"ha_bond",
+                      "peer_address":"169.254.1.0",
+                      "track":{
+                         "interfaces":{
+                            "bond1":{
+                               "flap_rate":"10",
+                               "reduce_priority":"50"
+                            }
+                         },
+                         "prob":{
+                            "prob1":{
+                               "target":"8.8.8.8",
+                               "source_address":"",
+                               "source_interface":"",
+                               "sla_standard":"test sla profile"
+                            }
+                         }
+                      }
+                   },
+                   "system":{
+                      "authentication":{
+                         "users":{
+                            "delta_admin":{
+                               "key":"<<RSA KEY>>",
+                               "password":"",
+                               "role":"superadmin"
+                            }
+                         },
+                         "roles":{
+                            
+                         }
+                      },
+                      "session":{
+                         "table_size":"2048",
+                         "ttl":"600",
+                         "tcp":{
+                            
+                         },
+                         "udp":{
+                            
+                         },
+                         "icmp":{
+                            
+                         },
+                         "rtp":{
+                            
+                         }
+                      },
+                      "ssh":{
+                         "interfaces":[
+                            "bond1"
+                         ],
+                         "allowed_addresses":[
+                            "172.16.1.2"
+                         ]
+                      },
+                      "snmp_polling":{
+                         "v2":{
+                            "community":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "v3":{
+                            "username":"",
+                            "password":"",
+                            "auth_algorytm":"",
+                            "encrypt_algorytim":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         }
+                      },
+                      "snmp_trap":{
+                         "v2":{
+                            "community":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "v3":{
+                            "username":"",
+                            "password":"",
+                            "auth_algorytm":"",
+                            "encrypt_algorytim":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "snmp_server":""
+                      },
+                      "certificates":{
+                         "ca":{
+                            
+                         },
+                         "machine":{
+                            
+                         }
+                      },
+                      "ipfix":{
+                         
+                      },
+                      "syslog":{
+                         "1":{
+                            "name":"test syslog",
+                            "address":"",
+                            "protocol":"udp",
+                            "port":"514",
+                            "severity":"",
+                            "syslog_standard":""
+                         }
+                      },
+                      "timezone":"est",
+                      "domain":"deltasase.com",
+                      "ntp":{
+                         "1":{
+                            "address":"",
+                            "source_interface":"",
+                            "source_address":"",
+                            "max_poll":"",
+                            "min_poll":""
+                         }
+                      },
+                      "dns":{
+                         "1":{
+                            "address":"8.8.8.8",
+                            "authentiction":""
+                         },
+                         "2":{
+                            "address":"8.8.8.8",
+                            "authentiction":""
+                         }
+                      },
+                      "advance":{
+                         "dpdk":{
+                            
+                         },
+                         "vpp":{
+                            
+                         },
+                         "sswan":{
+                            
+                         }
+                      }
+                   },
+                   "services":{
+                      "dns_service":{
+                         "active":true,
+                         "caching":true,
+                         "port":"53",
+                         "interfaces":[
+                            "bond1"
+                         ],
+                         "certificate":{
+                            "public_key":"",
+                            "private_key":""
+                         },
+                         "forwarding_servers":{
+                            "1":{
+                               "domain_prefix":"*.test.com",
+                               "address":"8.8.8.8",
+                               "dnssec":{
+                                  "active":true,
+                                  "unsigned_check":false,
+                                  "timecheck":false,
+                                  "class":"",
+                                  "key_tag":"",
+                                  "algorythm":"",
+                                  "digest_type":"",
+                                  "digest":""
+                               },
+                               "public_key":"",
+                               "tag":"",
+                               "source_address":"",
+                               "source_interface":"",
+                               "server":""
+                            }
+                         },
+                         "cache_size":"4096",
+                         "max_ttl":"",
+                         "min_ttl":"",
+                         "neg_ttl":"",
+                         "max_entries":"",
+                         "logging":"",
+                         "static_entries":{
+                            "test.net":"15.2.2.4"
+                         }
+                      }
+                   },
+                   "automation":{
+                      "scheduled_tasks":{
+                         "task1":{
+                            "schedule":{
+                               "start time":"14:20:00",
+                               "start date":"04/19/2024",
+                               "interval":24
+                            },
+                            "script":"/etc/scripts/test.py"
+                         }
+                      },
+                      "event_handler":{
+                         "event1":{
+                            "event_type":{
+                               
+                            },
+                            "script":"/etc/scripts/event_test.py"
+                         }
+                      }
+                   },
+                   "protocols":{
+                      "vrfs":{
+                         "LAN1":{
+                            "table_id":201,
+                            "static routes":{
+                               "1":{
+                                  "destination":"10.0.0.0/16",
+                                  "next_hop":"",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"10.0.8.8",
+                                     "sla_standard":""
+                                  }
+                               }
+                            },
+                            "bgp":{
+                               
+                            },
+                            "ospf":{
+                               
+                            },
+                            "isis":{
+                               
+                            },
+                            "multicast":{
+                               
+                            },
+                            "arp":{
+                               
+                            }
+                         },
+                         "Inet1":{
+                            "table_id":201,
+                            "static routes":{
+                               "1":{
+                                  "destination":"0.0.0.0/0",
+                                  "next_hop":"50.1.1.1",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"8.8.8.8",
+                                     "sla_standard":"Internet SLA"
+                                  }
+                               }
+                            },
+                            "bgp":{
+                               
+                            },
+                            "ospf":{
+                               
+                            },
+                            "isis":{
+                               
+                            },
+                            "multicast":{
+                               
+                            },
+                            "arp":{
+                               
+                            }
+                         },
+                         "management":{
+                            "table_id":99,
+                            "static routes":{
+                               "1":{
+                                  "destination":"0.0.0.0/0",
+                                  "next_hop":"50.1.1.1",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"8.8.8.8",
+                                     "sla_standard":"Internet SLA"
+                                  }
+                               }
+                            }
+                         }
+                      }
+                   }
+                }
+             }
+          }
+       },
+       "site_groups":{
+          "test site group1":{
+             "id":"1125888",
+             "tags":[
+                ""
+             ],
+             "type":"full mesh",
+             "hub1":"hub1",
+             "hub2":"",
+             "hub3":"",
+             "hub4":"",
+             "sase":{
+                "primary region":"us-east-01",
+                "backup region":""
+             },
+             "default_template":"test site template",
+             "policies":{
+                "qos":{
+                   "slot1":"", 
+                   "slot2":"", 
+                   "slot3":"qos policy 1", 
+                   "slot4":"default qos policy"
+                },
+                "security": {
+                   "slot1":"", 
+                   "slot2":"", 
+                   "slot3":"security policy 1", 
+                   "slot4":"default security policy"
+                },
+                "traffic": {
+                   "slot1":"", 
+                   "slot2":"", 
+                   "slot3":"traffic policy 1", 
+                   "slot4":"default traffic policy"
+                },
+                "nat":{
+                   "slot1":"", 
+                   "slot2":"", 
+                   "slot3":"nat policy 1", 
+                   "slot4":"default nat policy"
+                }
+             }
+          }
+       },
+       "sites":{
+          "Site1":{
+             "id":"111",
+             "site_group":"test site group1",
+             "site_template":"",
+             "address":{
+                "street":"",
+                "street2":"",
+                "country":"",
+                "city":"",
+                "state":"",
+                "zip":"",
+                "coordinate":{
+                   "latitude":"",
+                   "longitude":""
+                }
+             },
+             "tags":[
+                
+             ],
+             "policies":{
+                "qos":{
+                   "slot1":"", 
+                   "slot2":"local qos policy 1", 
+                   "slot3":"qos policy 1", 
+                   "slot4":"default qos policy"
+                },
+                "security": {
+                   "slot1":"", 
+                   "slot2":"local security policy 1", 
+                   "slot3":"security policy 1", 
+                   "slot4":"default security policy"
+                },
+                "traffic": {
+                   "slot1":"", 
+                   "slot2":"local traffic policy 1", 
+                   "slot3":"traffic policy 1", 
+                   "slot4":"default traffic policy"
+                },
+                "nat":{
+                   "slot1":"", 
+                   "slot2":"local nat policy 1", 
+                   "slot3":"nat policy 1", 
+                   "slot4":"default nat policy"
+                }
+             },
+             "underlays":{
+                "circuit1":{
+                   "description":"",
+                   "up_bw":10,
+                   "down_bw":50,
+                   "shaping":true,
+                   "metered":false,
+                   "underlay_standard":"",
+                   "tags":[],
+                   "service_provider":"isp1",
+                   "transport":"1",
+                   "sla_target":"",
+                   "sla_standard":""
+                }
+             },
+             "overlays":{
+                "default_active":true,
+                "sdwan":{
+                   "112223344":{
+                      "id":"112223344",
+                      "active":true,
+                      "shutdown": false,
+                      "underlay":{
+                         "local":"54898744444",
+                         "remote":"5246546d463"
+                      },
+                      "sla_standard": "default sla_standard"
+                   },
+                   "22222233555":{
+                      "id":"112223341",
+                      "active":true,
+                      "shutdown": false,
+                      "underlay":{
+                         "local":"54898744444",
+                         "remote":"524654687463"
+                      },
+                      "sla_standard": "default sla_standard"
+                   }
+                },
+                "sase":{
+                   "2323232323":{
+                      "id":"11222323344",
+                      "active":true,
+                      "shutdown": false,
+                      "underlay":"54898744444",
+                      "sce":"458875421555",
+                      "sla_standard": "default sla_standard"
+                   }
+                }
+             },
+             "ha":{
+                "interval":1000,
+                "failure_count":5,
+                "hold_time":5000,
+                "preemptive":true,
+                "session_sync":false,
+                "userdb_sync":true
+             },
+             "devices":{
+                "test device 1":{
+                   "id":"2123253443534",
+                   "software_version":"1.1.2",
+                   "hardware":{
+                      "serial_number":"efwe223234324",
+                      "model":"SEO1000",
+                      "ports":[
+                         "mgmt",
+                         "1",
+                         "2",
+                         "3",
+                         "4",
+                         "5"
+                      ]
+                   },
+                   "vlans":{
+                      "1":"TEST VLAN",
+                      "2":"Test VLAN2"
+                   },
+                   "interfaces":{
+                      "1":{
+                         "type":"port",
+                         "role":"internet",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"",
+                         "vlan":"",
+                         "underlay":"circuit1",
+                         "ipv4":{
+                            "address":"50.2.11.10/24",
+                            "gw":"50.2.11.1"
+                         },
+                         "ipv6":{
+                            
+                         },
+                         "ha_mirror":true
+                      },
+                      "bond1":{
+                         "type":"bond",
+                         "bond_members":[
+                            "5"
+                         ],
+                         "bond_mode":"active",
+                         "role":"lan",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"",
+                         "vlan":"",
+                         "underlay":"circuit1",
+                         "ipv4":{
+                            "primary":{
+                               "address":"172.16.100.10/24"
+                            },
+                            "secondary":{
+                               
+                            }
+                         },
+                         "ipv6":{
+                            "primary":{
+                               
+                            },
+                            "secondary":{
+                               
+                            }
+                         },
+                         "dhcp":{
+                            "dhcp_relay":{
+                               "enabled": true,
+                               "relay_ip": ["172.31.1.1", "172.31.2.1"],
+                               "source_interface": "",
+                               "options":{
+                                  "option_82": true
+                               },
+                               "giaddr_policy": "preserve",
+                               "rate_limit":"",
+                               "dhcp_relay_standard":""
+                            },
+                            "dhcp_server":{
+                               "enabled": true,
+                               "range_start": "172.16.100.20",
+                               "range_end": "172.16.100.100",
+                               "default_lease_time": 3600,
+                               "max_lease_time": 7200,
+                               "subnet_mask": "255.255.255.0",
+                               "domain_name": "localdomain",
+                               "dns_servers": ["172.16.100.10", "8.8.8.8"],
+                               "default_gateway": "172.16.100.1",
+                               "ntp_servers": ["time.google.com"],
+                               "options": {
+                                  "option_150": ["172.16.100.10"],
+                                  "custom_option_1": {
+                                      "code": 160,
+                                      "data": "custom_data",
+                                      "type": "string"
+                                  }
+                               },
+                               "win_servers": ["172.16.100.15"],
+                               "netbios_name_servers": ["172.16.100.15"],
+                               "netbios_node_type": 2,
+                               "dhcp_server_standard":"",
+                               "reserved":[
+                                  {
+                                     "ip":"172.16.100.10",
+                                     "mac":"aa:aaa:Aa:11:aa"
+                                  }
+                               ]
+                            }
+                         },
+                         "ha_mirror":true
+                      },
+                      "mgmt":{
+                         "type":"port",
+                         "role":"mgmt",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"mgmt",
+                         "vlan":"",
+                         "ipv4":{
+                            "address":"192.168.100.10/24",
+                            "gw":"192.168.100.1"
+                         },
+                         "ipv6":{
+                            
+                         }
+                      },
+                      "ha_bond":{
+                         "type":"bond",
+                         "bond_members":[
+                            "5"
+                         ],
+                         "bond_mode":"active",
+                         "role":"ha",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"ha",
+                         "vlan":"1",
+                         "ipv4":{
+                            "address":"169.254.1.0/31"
+                         }
+                      }
+                   },
+                   "ha":{
+                      "pririty":100,
+                      "ha_interface":"ha_bond",
+                      "peer_address":"169.254.1.1",
+                      "track":{
+                         "interfaces":{
+                            "bond1":{
+                               "flap_rate":"10",
+                               "reduce_priority":"50"
+                            }
+                         },
+                         "prob":{
+                            "prob1":{
+                               "target":"8.8.8.8",
+                               "source_address":"",
+                               "source_interface":"",
+                               "sla_standard":"test sla profile"
+                            }
+                         }
+                      }
+                   },
+                   "system":{
+                      "authentication":{
+                         "users":{
+                            "delta_admin":{
+                               "key":"<<RSA KEY>>",
+                               "password":"",
+                               "role":"superadmin"
+                            }
+                         },
+                         "roles":{
+                            
+                         }
+                      },
+                      "session":{
+                         "table_size":"2048",
+                         "ttl":"600",
+                         "tcp":{
+                            
+                         },
+                         "udp":{
+                            
+                         },
+                         "icmp":{
+                            
+                         },
+                         "rtp":{
+                            
+                         }
+                      },
+                      "ssh":{
+                         "interfaces":[
+                            "bond1"
+                         ],
+                         "allowed_addresses":[
+                            "172.16.1.2"
+                         ]
+                      },
+                      "snmp_polling":{
+                         "source_interface":"",
+                         "v2":{
+                            "community":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "v3":{
+                            "username":"",
+                            "password":"",
+                            "auth_algorytm":"",
+                            "encrypt_algorytim":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         }
+                      },
+                      "snmp_trap":{
+                         "v2":{
+                            "community":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "v3":{
+                            "username":"",
+                            "password":"",
+                            "auth_algorytm":"",
+                            "encrypt_algorytim":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "snmp_server":""
+                      },
+                      "certificates":{
+                         "ca":{
+                            
+                         },
+                         "machine":{
+                            
+                         }
+                      },
+                      "ipfix":{
+                         "enabled": true,
+                         "export_interval": 60,
+                         "collector": {
+                           "ip_address": "192.168.100.101",
+                           "port": 4739,
+                           "transport_protocol": "UDP"
+                         },
+                         "template_refresh_time": 600,
+                         "option_template": true,
+                         "record_fields": [
+                           "sourceIPv4Address",
+                           "destinationIPv4Address",
+                           "sourceTransportPort",
+                           "destinationTransportPort",
+                           "protocolIdentifier",
+                           "packetDeltaCount",
+                           "octetDeltaCount",
+                           "flowStartSysUpTime",
+                           "flowEndSysUpTime"
+                         ],
+                         "interfaces":[],
+                         "source_interface":"",
+                         "ipfix_standard":"Default IPFIX config"
+ 
+                      },
+                      "syslog":{
+                         "enabled": true,
+                         "servers": [
+                           {
+                             "ip_address": "192.168.100.106",
+                             "port": 514,
+                             "transport_protocol": "UDP",
+                             "facility": "local4",
+                             "severity": "info"
+                           }
+                         ],
+                         "syslog_standard":"Test Syslog_config"
+                      },
+                      "timezone":"est",
+                      "domain":"deltasase.com",
+                      "ntp":{
+                         "ntp_standard":"",
+                         "1":{
+                            "address":"",
+                            "source_interface":"",
+                            "source_address":"",
+                            "max_poll":"",
+                            "min_poll":""
+                         }
+                      },
+                      "dns":{
+                         "1":{
+                            "address":"8.8.8.8",
+                            "authentiction":""
+                         },
+                         "2":{
+                            "address":"8.8.8.8",
+                            "authentiction":""
+                         }
+                      },
+                      "advance":{
+                         "dpdk":{
+                            
+                         },
+                         "vpp":{
+                            
+                         },
+                         "sswan":{
+                            
+                         }
+                      }
+                   },
+                   "services":{
+                      "dns_service":{
+                         "active":true,
+                         "caching":true,
+                         "port":"53",
+                         "interfaces":[
+                            "bond1"
+                         ],
+                         "certificate":{
+                            "public_key":"",
+                            "private_key":""
+                         },
+                         "forwarding_servers":{
+                            "1":{
+                               "domain_prefix":"*.test.com",
+                               "address":"8.8.8.8",
+                               "dnssec":{
+                                  "active":true,
+                                  "unsigned_check":false,
+                                  "timecheck":false,
+                                  "class":"",
+                                  "key_tag":"",
+                                  "algorythm":"",
+                                  "digest_type":"",
+                                  "digest":""
+                               },
+                               "public_key":"",
+                               "tag":"",
+                               "source_address":"",
+                               "source_interface":"",
+                               "server":""
+                            }
+                         },
+                         "cache_size":"4096",
+                         "max_ttl":"",
+                         "min_ttl":"",
+                         "neg_ttl":"",
+                         "max_entries":"",
+                         "logging":"",
+                         "static_entries":{
+                            "test.net":"15.2.2.4"
+                         }
+                      }
+                   },
+                   "automation":{
+                      "scheduled_tasks":{
+                         "task1":{
+                            "schedule":{
+                               "start time":"14:20:00",
+                               "start date":"04/19/2024",
+                               "interval":24
+                            },
+                            "script":"/etc/scripts/test.py"
+                         }
+                      },
+                      "event_handler":{
+                         "event1":{
+                            "event_type":{
+                               
+                            },
+                            "script":"/etc/scripts/event_test.py"
+                         }
+                      }
+                   },
+                   "protocols":{
+                      "vrfs":{
+                         "LAN1":{
+                            "table_id":201,
+                            "static routes":{
+                               "1":{
+                                  "destination":"10.0.0.0/16",
+                                  "next_hop":"",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"10.0.8.8",
+                                     "sla_standard":""
+                                  }
+                               }
+                            },
+                            "bgp":{
+                               
+                            },
+                            "ospf":{
+                               
+                            },
+                            "isis":{
+                               
+                            },
+                            "multicast":{
+                               
+                            },
+                            "arp":{
+                               
+                            }
+                         },
+                         "Inet1":{
+                            "table_id":201,
+                            "static routes":{
+                               "1":{
+                                  "destination":"0.0.0.0/0",
+                                  "next_hop":"50.1.1.1",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"8.8.8.8",
+                                     "sla_standard":"Internet SLA"
+                                  }
+                               }
+                            },
+                            "bgp":{
+                               
+                            },
+                            "ospf":{
+                               
+                            },
+                            "isis":{
+                               
+                            },
+                            "multicast":{
+                               
+                            },
+                            "arp":{
+                               
+                            }
+                         },
+                         "management":{
+                            "table_id":99,
+                            "static routes":{
+                               "1":{
+                                  "destination":"0.0.0.0/0",
+                                  "next_hop":"50.1.1.1",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"8.8.8.8",
+                                     "sla_standard":"Internet SLA"
+                                  }
+                               }
+                            }
+                         }
+                      }
+                   }
+                },
+                "test device 2":{
+                   "id":"2123253443534",
+                   "software_version":"1.1.2",
+                   "hardware":{
+                      "serial_number":"efwe223234324",
+                      "model":"SEO1000",
+                      "ports":[
+                         "mgmt",
+                         "1",
+                         "2",
+                         "3",
+                         "4",
+                         "5"
+                      ]
+                   },
+                   "vlans":{
+                      "1":"TEST VLAN",
+                      "2":"Test VLAN2"
+                   },
+                   "interfaces":{
+                      "1":{
+                         "type":"port",
+                         "role":"internet",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"",
+                         "vlan":"",
+                         "underlay":"circuit1",
+                         "ipv4":{
+                            "address":"50.2.11.10/24",
+                            "gw":"50.2.11.1"
+                         },
+                         "ipv6":{
+                            
+                         },
+                         "ha_mirror":true
+                      },
+                      "bond1":{
+                         "type":"bond",
+                         "bond_members":[
+                            "5"
+                         ],
+                         "bond_mode":"active",
+                         "role":"lan",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"",
+                         "vlan":"",
+                         "underlay":"circuit1",
+                         "ipv4":{
+                            "primary":{
+                               "address":"172.16.100.10/24"
+                            },
+                            "secondary":{
+                               
+                            }
+                         },
+                         "ipv6":{
+                            "primary":{
+                               
+                            },
+                            "secondary":{
+                               
+                            }
+                         },
+                         "dhcp":{
+                            "dhcp_relay":{
+                               
+                            },
+                            "dhcp_server":{
+                               
+                            }
+                         },
+                         "ha_mirror":true
+                      },
+                      "mgmt":{
+                         "type":"port",
+                         "role":"mgmt",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"mgmt",
+                         "vlan":"",
+                         "ipv4":{
+                            "address":"192.168.100.10/24",
+                            "gw":"192.168.100.1"
+                         },
+                         "ipv6":{
+                            
+                         }
+                      },
+                      "ha_bond":{
+                         "type":"bond",
+                         "bond_members":[
+                            "5"
+                         ],
+                         "bond_mode":"active",
+                         "role":"ha",
+                         "tags":[
+                            
+                         ],
+                         "description":"",
+                         "mac":"",
+                         "media":"rj45",
+                         "speed":"1000",
+                         "duplex":"full",
+                         "zone":"ha",
+                         "vlan":"1",
+                         "ipv4":{
+                            "address":"169.254.1.0/31"
+                         }
+                      }
+                   },
+                   "ha":{
+                      "pririty":90,
+                      "ha_interface":"ha_bond",
+                      "peer_address":"169.254.1.0",
+                      "track":{
+                         "interfaces":{
+                            "bond1":{
+                               "flap_rate":"10",
+                               "reduce_priority":"50"
+                            }
+                         },
+                         "prob":{
+                            "prob1":{
+                               "target":"8.8.8.8",
+                               "source_address":"",
+                               "source_interface":"",
+                               "sla_standard":"test sla profile"
+                            }
+                         }
+                      }
+                   },
+                   "system":{
+                      "authentication":{
+                         "users":{
+                            "delta_admin":{
+                               "key":"<<RSA KEY>>",
+                               "password":"",
+                               "role":"superadmin"
+                            }
+                         },
+                         "roles":{
+                            
+                         }
+                      },
+                      "session":{
+                         "table_size":"2048",
+                         "ttl":"600",
+                         "tcp":{
+                            
+                         },
+                         "udp":{
+                            
+                         },
+                         "icmp":{
+                            
+                         },
+                         "rtp":{
+                            
+                         }
+                      },
+                      "ssh":{
+                         "interfaces":[
+                            "bond1"
+                         ],
+                         "allowed_addresses":[
+                            "172.16.1.2"
+                         ]
+                      },
+                      "snmp_polling":{
+                         "v2":{
+                            "community":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "v3":{
+                            "username":"",
+                            "password":"",
+                            "auth_algorytm":"",
+                            "encrypt_algorytim":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         }
+                      },
+                      "snmp_trap":{
+                         "v2":{
+                            "community":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "v3":{
+                            "username":"",
+                            "password":"",
+                            "auth_algorytm":"",
+                            "encrypt_algorytim":"",
+                            "allowed_addresses":[
+                               
+                            ]
+                         },
+                         "snmp_server":""
+                      },
+                      "certificates":{
+                         "ca":{
+                            
+                         },
+                         "machine":{
+                            
+                         }
+                      },
+                      "ipfix":{
+                         
+                      },
+                      "syslog":{
+                         "1":{
+                            "name":"test syslog",
+                            "address":"",
+                            "protocol":"udp",
+                            "port":"514",
+                            "severity":"",
+                            "syslog_standard":"",
+                            "security": {
+                               "tls_enabled": true,
+                               "tls_certificate": "/etc/ssl/certs/syslog-server-cert.pem",
+                               "tls_key": "/etc/ssl/private/syslog-server-key.pem",
+                               "ca_certificate": "/etc/ssl/certs/ca-cert.pem"
+                            }
+                         }
+                      },
+                      "timezone":"est",
+                      "domain":"deltasase.com",
+                      "ntp":{
+                         "1":{
+                            "address":"",
+                            "source_interface":"",
+                            "source_address":"",
+                            "max_poll":"",
+                            "min_poll":""
+                         }
+                      },
+                      "dns":{
+                         "1":{
+                            "address":"8.8.8.8",
+                            "authentiction":""
+                         },
+                         "2":{
+                            "address":"8.8.8.8",
+                            "authentiction":""
+                         }
+                      },
+                      "advance":{
+                         "dpdk":{
+                            
+                         },
+                         "vpp":{
+                            
+                         },
+                         "sswan":{
+                            
+                         }
+                      }
+                   },
+                   "services":{
+                      "dns_service":{
+                         "active":true,
+                         "caching":true,
+                         "port":"53",
+                         "interfaces":[
+                            "bond1"
+                         ],
+                         "certificate":{
+                            "public_key":"",
+                            "private_key":""
+                         },
+                         "forwarding_servers":{
+                            "1":{
+                               "domain_prefix":"*.test.com",
+                               "address":"8.8.8.8",
+                               "dnssec":{
+                                  "active":true,
+                                  "unsigned_check":false,
+                                  "timecheck":false,
+                                  "class":"",
+                                  "key_tag":"",
+                                  "algorythm":"",
+                                  "digest_type":"",
+                                  "digest":""
+                               },
+                               "public_key":"",
+                               "tag":"",
+                               "source_address":"",
+                               "source_interface":"",
+                               "server":""
+                            }
+                         },
+                         "cache_size":"4096",
+                         "max_ttl":"",
+                         "min_ttl":"",
+                         "neg_ttl":"",
+                         "max_entries":"",
+                         "logging":"",
+                         "static_entries":{
+                            "test.net":"15.2.2.4"
+                         }
+                      }
+                   },
+                   "automation":{
+                      "scheduled_tasks":{
+                         "task1":{
+                            "schedule":{
+                               "start time":"14:20:00",
+                               "start date":"04/19/2024",
+                               "interval":24
+                            },
+                            "script":"/etc/scripts/test.py"
+                         }
+                      },
+                      "event_handler":{
+                         "event1":{
+                            "event_type":{
+                               
+                            },
+                            "script":"/etc/scripts/event_test.py"
+                         }
+                      }
+                   },
+                   "protocols":{
+                      "vrfs":{
+                         "LAN1":{
+                            "table_id":201,
+                            "static routes":{
+                               "1":{
+                                  "destination":"10.0.0.0/16",
+                                  "next_hop":"",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"10.0.8.8",
+                                     "sla_standard":""
+                                  }
+                               }
+                            },
+                            "bgp":{
+                               
+                            },
+                            "ospf":{
+                               
+                            },
+                            "isis":{
+                               
+                            },
+                            "multicast":{
+                               
+                            },
+                            "arp":{
+                               
+                            }
+                         },
+                         "Inet1":{
+                            "table_id":201,
+                            "static routes":{
+                               "1":{
+                                  "destination":"0.0.0.0/0",
+                                  "next_hop":"50.1.1.1",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"8.8.8.8",
+                                     "sla_standard":"Internet SLA"
+                                  }
+                               }
+                            },
+                            "bgp":{
+                               
+                            },
+                            "ospf":{
+                               
+                            },
+                            "isis":{
+                               
+                            },
+                            "multicast":{
+                               
+                            },
+                            "arp":{
+                               
+                            }
+                         },
+                         "management":{
+                            "table_id":99,
+                            "static routes":{
+                               "1":{
+                                  "destination":"0.0.0.0/0",
+                                  "next_hop":"50.1.1.1",
+                                  "interface":"",
+                                  "local":false,
+                                  "prob":{
+                                     "target":"8.8.8.8",
+                                     "sla_standard":"Internet SLA"
+                                  }
+                               }
+                            }
+                         }
+                      }
+                   }
+                }
+             }
+          }
+       },
+       "application_standard":"Default App Standard"
+    },
+    "alert":{
+       "notifications": {
+          "recipients":{
+             "NOC Group":{
+                "emails":["admin@example.com", "support@example.com"],
+                "sms": ["+1234567890", "+1987654321"],
+                "webhook": {
+                   "enabled": true,
+                   "address": "https://yourcompanywebhookurl.com/alerts",
+                   "headers": {
+                     "Content-Type": "application/json"
+                   },
+                   "payload_template": "{\"incident\": \"{{incident_type}}\", \"priority\": \"{{priority}}\", \"site\": \"{{site}}\"}"
+                }
+             },
+             "ServiceNow API server":{
+                "api":{
+                   "address": "https://yourcompanywebhookurl.com/alerts",
+                   "header": {
+ 
+                   },
+                   "body":{
+ 
+                   }
+                }
+             }
+          },
+          "templates":{
+             "email":{
+ 
+             },
+             "sms":{
+ 
+             },
+             "webhook":{
+ 
+             }
+          }
+       },
+       "rules": {
+          "1": {
+             "incident": ["underlay_down"],
+             "sites": ["any"],
+             "priority": "3",
+             "escalation": {
+                "after_minutes": 60,
+                "new_priority": "2",
+                "repeat_notification": true
+             },
+             "notify":["NOC Group"]
+          },
+          "2": {
+            "incident": ["site"],
+            "sites": ["any"],
+            "priority": "2",
+            "escalation": {
+              "after_minutes": 120,
+              "new_priority": "1",
+              "repeat_notification": true
+            },
+            "notify":["NOC Group", "ServiceNow API server"]
+          }
+       }
+    },
+    "reports":{
+       "report1":{
+          "scope":{
+             
+          },
+          "notification":{
+             
+          },
+          "schedule":{
+             "start time":"14:20:00",
+             "start date":"04/19/2024",
+             "interval":24
+          }
+       }
+    },
+    "integrations":{
+       "infoblox":{
+          
+       },
+       "aws":{
+          
+       },
+       "azure":{
+          
+       },
+       "gcp":{
+          
+       },
+       "service now":{
+          
+       },
+       "kubernetes":{
+ 
+       }
+    }
+ }
