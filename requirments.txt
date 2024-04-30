@@ -13,6 +13,7 @@ django-filter
 django-tenants
 django_extensions
 celery
+radis
 tenant-schemas-celery
 drf-nested-routers
 django-netfields
