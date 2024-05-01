@@ -112,7 +112,7 @@ class Contact(ShareBase):
 
 
 class Customer(models.Model):
-    name = models.CharField(max_length=200, db_index=True)
+    name = models.CharField(unique=True, max_length=200, db_index=True)
     company_name = models.CharField(max_length=200, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     contacts = models.ManyToManyField(Contact, related_name='customers_contacts')
@@ -131,7 +131,7 @@ class AdminUser(ShareBase):
 class Tenant(TenantMixin):
     tenant_id = models.IntegerField(unique=True, db_index=True)
     schema_name = models.CharField(max_length=255, unique=True)
-    name = models.CharField(max_length=255, db_index=True)
+    name = models.CharField(unique=True, max_length=255, db_index=True)
     description = models.TextField(max_length=200, null=True, blank=True)
     created_on = models.DateField(auto_now_add=True)
     snapshot = models.TextField(max_length=200, null=True, blank=True)

@@ -2,12 +2,23 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Customer, Tenant, Domain
-from .serializers import CustomerSerializer, TenantSerializer
+from .models import (Product, ProductCategory, License, Region, SCE, SASEController,
+                     SDWANController, Contact, Customer, AdminUser, Tenant, Tag,
+                     IKEEncryption, IKEHash, IKEDHGroup, IKERPF, ESPEncryption,
+                     ESPHash, ESPDHGroup, ESPPFS, RoutingProtocol, Domain)
+from .serializers import (ProductSerializer, ProductCategorySerializer, LicenseSerializer,
+                          RegionSerializer, SCESerializer, SASEControllerSerializer,
+                          SDWANControllerSerializer, ContactSerializer, CustomerSerializer,
+                          AdminUserSerializer, TenantSerializer, TagSerializer,
+                          IKEEncryptionSerializer, IKEHashSerializer, IKEDHGroupSerializer,
+                          IKERPFSerializer, ESPEncryptionSerializer, ESPHashSerializer,
+                          ESPDHGroupSerializer, ESPPFSSerializer, RoutingProtocolSerializer)
+
 from django.db import connection
 from django.db.utils import ProgrammingError
 import logging
 from .default_settings import copy_data_from_default
+import serializers
 
 logger = logging.getLogger(__name__)
 
@@ -16,24 +27,24 @@ class TenantViewSet(viewsets.ModelViewSet):
     serializer_class = TenantSerializer
 
     def perform_create(self, serializer):
-        logger.info("Creating a new Tenant")
-        tenant = serializer.save()  # create the tenant
-
-        # create an associated Domain for the tenant
-        domain = Domain()
-        domain.domain = tenant.tenant_id
-        domain.tenant = tenant
-        domain.is_primary = True
-        domain.save()
-        # copy_data_from_default(tenant)
-        logger.info(f"Created new Tenant {tenant.name} with domain {domain.domain}")
+        try:
+            tenant = serializer.save()  # Create the tenant
+            domain = Domain(domain=str(tenant.tenant_id), tenant=tenant, is_primary=True)
+            domain.save()
+            # copy_data_from_default(tenant)  # Uncomment and handle this properly
+            logger.info(f"Created new Tenant {tenant.name} with domain {domain.domain}")
+        except Exception as e:
+            logger.error(f"Failed to create tenant or domain: {str(e)}")
+            raise serializers.ValidationError("Failed to create tenant or domain")
 
     def perform_destroy(self, instance):
-        # Delete associated Domain instances.
-        instance.domains.all().delete()
-        
-        # Drop the tenant's schema.
-        instance.delete(force_drop=True)
+        try:
+            instance.domains.all().delete()  # Assume domains related to instance
+            instance.delete(force_drop=True)
+            logger.info(f"Deleted tenant {instance.name} and associated data.")
+        except Exception as e:
+            logger.error(f"Failed to delete tenant {instance.name}: {str(e)}")
+            raise serializers.ValidationError("Failed to delete tenant")
 
     @action(detail=True, methods=['get'])
     def children(self, request, pk=None):
@@ -46,3 +57,78 @@ class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
 
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+class ProductCategoryViewSet(viewsets.ModelViewSet):
+    queryset = ProductCategory.objects.all()
+    serializer_class = ProductCategorySerializer
+
+class LicenseViewSet(viewsets.ModelViewSet):
+    queryset = License.objects.all()
+    serializer_class = LicenseSerializer
+
+class RegionViewSet(viewsets.ModelViewSet):
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
+
+class SCEViewSet(viewsets.ModelViewSet):
+    queryset = SCE.objects.all()
+    serializer_class = SCESerializer
+
+class SASEControllerViewSet(viewsets.ModelViewSet):
+    queryset = SASEController.objects.all()
+    serializer_class = SASEControllerSerializer
+
+class SDWANControllerViewSet(viewsets.ModelViewSet):
+    queryset = SDWANController.objects.all()
+    serializer_class = SDWANControllerSerializer
+
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
+class AdminUserViewSet(viewsets.ModelViewSet):
+    queryset = AdminUser.objects.all()
+    serializer_class = AdminUserSerializer
+
+class IKEEncryptionViewSet(viewsets.ModelViewSet):
+    queryset = IKEEncryption.objects.all()
+    serializer_class = IKEEncryptionSerializer
+
+class IKEHashViewSet(viewsets.ModelViewSet):
+    queryset = IKEHash.objects.all()
+    serializer_class = IKEHashSerializer
+
+class IKEDHGroupViewSet(viewsets.ModelViewSet):
+    queryset = IKEDHGroup.objects.all()
+    serializer_class = IKEDHGroupSerializer
+
+class IKERPFViewSet(viewsets.ModelViewSet):
+    queryset = IKERPF.objects.all()
+    serializer_class = IKERPFSerializer
+
+class ESPEncryptionViewSet(viewsets.ModelViewSet):
+    queryset = ESPEncryption.objects.all()
+    serializer_class = ESPEncryptionSerializer
+
+class ESPHashViewSet(viewsets.ModelViewSet):
+    queryset = ESPHash.objects.all()
+    serializer_class = ESPHashSerializer
+
+class ESPDHGroupViewSet(viewsets.ModelViewSet):
+    queryset = ESPDHGroup.objects.all()
+    serializer_class = ESPDHGroupSerializer
+
+class ESPPFSViewSet(viewsets.ModelViewSet):
+    queryset = ESPPFS.objects.all()
+    serializer_class = ESPPFSSerializer
+
+class RoutingProtocolViewSet(viewsets.ModelViewSet):
+    queryset = RoutingProtocol.objects.all()
+    serializer_class = RoutingProtocolSerializer
