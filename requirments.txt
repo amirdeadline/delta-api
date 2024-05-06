@@ -19,3 +19,4 @@ drf-nested-routers
 django-netfields
 requests
 django-polymorphic
+ipaddress==1.0.23

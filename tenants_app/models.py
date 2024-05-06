@@ -4,34 +4,65 @@ from django_tenants.models import TenantMixin, DomainMixin
 from django.core.exceptions import ValidationError  # Import ValidationError
 from django.db.models import Max
 import logging
+from django.utils import timezone
+from django.utils.deprecation import MiddlewareMixin
+
 
 logger = logging.getLogger(__name__)
 
+class UserMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        user_id = request.headers.get('user_id')
+        setattr(request, 'user_id', user_id)
 
 class ShareBase(models.Model):
     name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.CharField(max_length=100)
+    created_by = models.CharField(max_length=100, null=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True)
-    modified_by = models.CharField(max_length=100)
-    detail = models.TextField()
+    modified_by = models.CharField(max_length=100, null=True, blank=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_by = models.CharField(max_length=100, null=True, blank=True)
+    detail = models.JSONField()
     active = models.BooleanField(default=True)
 
     class Meta:
         abstract = True
+    
+    def save(self, *args, **kwargs):
+        user_id = kwargs.pop('user_id', None)  # Receive user_id from the view
+        if not self.pk:  # Object is being created
+            self.created_by = user_id
+        self.modified_by = user_id
+        super().save(*args, **kwargs)
 
-class Tag(models.Model):
+    def delete(self, *args, **kwargs):
+        user_id = kwargs.pop('user_id', None)  # Receive user_id from the view
+        self.deleted_at = timezone.now()
+        self.deleted_by = user_id
+        super().delete(*args, **kwargs)
+
+class ShareTag(models.Model):
     key = models.CharField(max_length=100, unique=True)
-    value = JSONField()
+    value = models.JSONField()
     
     def __str__(self):
         return f"{self.key}: {self.value}"
 
+class SDWANSoftware(ShareBase):
+    version = models.CharField(max_length=100, db_index=True)  # Adding an index
+    tags = models.ManyToManyField(ShareTag, related_name='sdwan_software_tags')
+    production = models.BooleanField(default=True)
+    url= models.URLField()
+
+    def __str__(self):
+        return f"{self.name} v{self.version}"
+
 class Product(ShareBase):
     unit = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    category = models.ForeignKey('ProductCategory', on_delete=models.CASCADE)
-    tags = models.ManyToManyField(Tag, related_name='products_tags')
+    category = models.ForeignKey('ProductCategory', on_delete=models.SET_NULL)
+    tags = models.ManyToManyField(ShareTag, related_name='products_tags')
     
     def __str__(self):
         return self.name
@@ -46,14 +77,14 @@ class ProductCategory(ShareBase):
 class License(ShareBase):
     unit = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    tags = models.ManyToManyField(Tag, related_name='licenses')
+    tags = models.ManyToManyField(ShareTag, related_name='licenses')
     
     def __str__(self):
         return self.name
 
 class Region(ShareBase):
     cloud = models.CharField(max_length=100)
-    tags = models.ManyToManyField(Tag, related_name='regions')
+    tags = models.ManyToManyField(ShareTag, related_name='regions')
     
     def __str__(self):
         return self.name
@@ -67,7 +98,7 @@ class SCE(ShareBase):
     certificate = models.TextField()
     enabled = models.BooleanField(default=True)
     dedicated = models.BooleanField(default=False)
-    tags = models.ManyToManyField(Tag, related_name='sces')
+    tags = models.ManyToManyField(ShareTag, related_name='sces')
     
     def __str__(self):
         return self.name
@@ -81,7 +112,7 @@ class SASEController(ShareBase):
     certificate = models.TextField()
     enabled = models.BooleanField(default=True)
     dedicated = models.BooleanField(default=False)
-    tags = models.ManyToManyField(Tag, related_name='sase_controllers')
+    tags = models.ManyToManyField(ShareTag, related_name='sase_controllers')
     
     def __str__(self):
         return self.name
@@ -95,7 +126,7 @@ class SDWANController(ShareBase):
     certificate = models.TextField()
     enabled = models.BooleanField(default=True)
     dedicated = models.BooleanField(default=False)
-    tags = models.ManyToManyField(Tag, related_name='sdwan_controllers')
+    tags = models.ManyToManyField(ShareTag, related_name='sdwan_controllers')
     
     def __str__(self):
         return self.name
@@ -105,7 +136,7 @@ class Contact(ShareBase):
     email = models.EmailField(max_length=200, unique=True)
     number = models.CharField(max_length=15, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
-    tags = models.ManyToManyField(Tag, related_name='contacts_tags')
+    tags = models.ManyToManyField(ShareTag, related_name='contacts_tags')
     
     def __str__(self):
         return self.name
@@ -116,7 +147,7 @@ class Customer(models.Model):
     company_name = models.CharField(max_length=200, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     contacts = models.ManyToManyField(Contact, related_name='customers_contacts')
-    tags = models.ManyToManyField(Tag, related_name='customers_tags')
+    tags = models.ManyToManyField(ShareTag, related_name='customers_tags')
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -133,17 +164,24 @@ class Tenant(TenantMixin):
     schema_name = models.CharField(max_length=255, unique=True)
     name = models.CharField(unique=True, max_length=255, db_index=True)
     description = models.TextField(max_length=200, null=True, blank=True)
-    created_on = models.DateField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.CharField(max_length=100, null=True, blank=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    modified_by = models.CharField(max_length=100, null=True, blank=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_by = models.CharField(max_length=100, null=True, blank=True)
     snapshot = models.TextField(max_length=200, null=True, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     enabled = models.BooleanField(default=True)
     production = models.BooleanField(default=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-    detail = JSONField()
+    detail = models.JSONField()
     admins = models.ManyToManyField('AdminUser', related_name='tenant_admins')
     products = models.ManyToManyField(Product, related_name='tenant_products')
     licenses = models.ManyToManyField(License, related_name='tenant_licenses')
-
+    softwares = models.ManyToManyField(SDWANSoftware, related_name='tenant_softwares')
+    tags = models.ManyToManyField(ShareTag, related_name='tenants_tags')
+    config = models.URLField(blank=True)
 
     def __str__(self):
         return self.schema_name
@@ -175,7 +213,18 @@ class Tenant(TenantMixin):
         except Exception as e:
             logger.error("Error saving tenant: %s", e)
             raise
-
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        user_id = kwargs.pop('user_id', None)
+        if self.children.exists():
+            logger.error("Attempt to delete tenant with existing children")
+            raise Exception("Cannot delete tenant because it has child tenants.")
+        if self.enabled:
+            logger.error("Attempt to delete tenant that is enabled")
+            raise Exception("Cannot delete tenant because it is currently enabled.")
+        self.deleted_at = timezone.now()
+        self.deleted_by = user_id
+        self.save()
 
 class Domain(DomainMixin):
     pass
@@ -234,3 +283,34 @@ class RoutingProtocol(models.Model):
 
     def __str__(self):
         return self.name
+
+class InterfaceType(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+    
+class InterfaceRole(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+    
+class VRFRole(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+    
+class LACPHashOption(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+    
+class DeviceModel(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+    

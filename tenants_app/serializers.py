@@ -1,13 +1,14 @@
 # tenants_app/serializers.py
 from rest_framework import serializers
 from .models import (Product, ProductCategory, License, Region, SCE, SASEController,
-                     SDWANController, Contact, Customer, AdminUser, Tenant, Tag,
-                     IKEEncryption, IKEHash, IKEDHGroup, IKERPF, ESPEncryption,
-                     ESPHash, ESPDHGroup, ESPPFS, RoutingProtocol)
+                     SDWANController, Contact, Customer, AdminUser, Tenant, ShareTag,
+                     IKEEncryption, IKEHash, IKEDHGroup, IKERPF, ESPEncryption, ShareTag,
+                     InterfaceType, InterfaceRole, VRFRole, LACPHashOption, DeviceModel,
+                     ESPHash, ESPDHGroup, ESPPFS, RoutingProtocol, SDWANSoftware)
 
-class TagSerializer(serializers.ModelSerializer):
+class ShareTagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Tag
+        model = ShareTag
         fields = '__all__'
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -50,39 +51,40 @@ class ContactSerializer(serializers.ModelSerializer):
         model = Contact
         fields = '__all__'
 
-class CustomerSerializer(serializers.ModelSerializer):
-    contacts = ContactSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Customer
-        fields = '__all__'
-
 class AdminUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdminUser
         fields = '__all__'
 
-class TenantSerializer(serializers.ModelSerializer):
-    admins = AdminUserSerializer(many=True, read_only=True)
-    products = ProductSerializer(many=True, read_only=True)
-    licenses = LicenseSerializer(many=True, read_only=True)
-
+class SDWANSoftwareSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Tenant
+        model = SDWANSoftware
         fields = '__all__'
-        read_only_fields = ('schema_name', 'tenant_id')  # Make these fields read-only
 
-    def create(self, validated_data):
-        # Custom creation logic can be added here if necessary
-        return super().create(validated_data)
+class InterfaceTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InterfaceType
+        fields = '__all__'
 
-    def update(self, instance, validated_data):
-        # Custom update logic, can ensure schema_name and tenant_id are not updated
-        # This is just extra safeguarding; 'read_only_fields' already handles it
-        instance.name = validated_data.get('name', instance.name)
-        instance.description = validated_data.get('description', instance.description)
-        # Ensure no updates to schema_name or tenant_id here
-        return super().update(instance, validated_data)
+class InterfaceRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InterfaceRole
+        fields = '__all__'
+
+class VRFRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VRFRole
+        fields = '__all__'
+
+class LACPHashOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LACPHashOption
+        fields = '__all__'
+
+class DeviceModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeviceModel
+        fields = '__all__'
 
 class IKEEncryptionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -127,4 +129,36 @@ class ESPPFSSerializer(serializers.ModelSerializer):
 class RoutingProtocolSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoutingProtocol
+        fields = '__all__'
+
+class TenantSerializer(serializers.ModelSerializer):
+    admins = AdminUserSerializer(many=True, read_only=True)
+    products = ProductSerializer(many=True, read_only=True)
+    licenses = LicenseSerializer(many=True, read_only=True)
+    softwares = SDWANSoftwareSerializer(many=True, read_only=True)
+    tags = ShareTagSerializer(many=True)
+
+    class Meta:
+        model = Tenant
+        fields = '__all__'
+        read_only_fields = ('schema_name', 'tenant_id')  # Make these fields read-only
+
+    def create(self, validated_data):
+        # Custom creation logic can be added here if necessary
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Custom update logic, can ensure schema_name and tenant_id are not updated
+        # This is just extra safeguarding; 'read_only_fields' already handles it
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        # Ensure no updates to schema_name or tenant_id here
+        return super().update(instance, validated_data)
+    
+
+class CustomerSerializer(serializers.ModelSerializer):
+    contacts = ContactSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Customer
         fields = '__all__'

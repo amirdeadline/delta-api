@@ -3,16 +3,18 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import (Product, ProductCategory, License, Region, SCE, SASEController,
-                     SDWANController, Contact, Customer, AdminUser, Tenant, Tag,
+                     SDWANController, Contact, Customer, AdminUser, Tenant, ShareTag,
                      IKEEncryption, IKEHash, IKEDHGroup, IKERPF, ESPEncryption,
-                     ESPHash, ESPDHGroup, ESPPFS, RoutingProtocol, Domain)
+                     InterfaceType, InterfaceRole, VRFRole, LACPHashOption, DeviceModel,
+                     ESPHash, ESPDHGroup, ESPPFS, RoutingProtocol, Domain, SDWANSoftware)
 from .serializers import (ProductSerializer, ProductCategorySerializer, LicenseSerializer,
                           RegionSerializer, SCESerializer, SASEControllerSerializer,
                           SDWANControllerSerializer, ContactSerializer, CustomerSerializer,
-                          AdminUserSerializer, TenantSerializer, TagSerializer,
+                          AdminUserSerializer, TenantSerializer, ShareTagSerializer,
                           IKEEncryptionSerializer, IKEHashSerializer, IKEDHGroupSerializer,
                           IKERPFSerializer, ESPEncryptionSerializer, ESPHashSerializer,
-                          ESPDHGroupSerializer, ESPPFSSerializer, RoutingProtocolSerializer)
+                          InterfaceTypeSerializer, InterfaceRoleSerializer, VRFRoleSerializer, LACPHashOptionSerializer, DeviceModelSerializer,
+                          ESPDHGroupSerializer, ESPPFSSerializer, RoutingProtocolSerializer, SDWANSoftwareSerializer)
 
 from django.db import connection
 from django.db.utils import ProgrammingError
@@ -52,14 +54,17 @@ class TenantViewSet(viewsets.ModelViewSet):
         children = TenantSerializer(tenant.get_children(), many=True).data
         return Response(children, status=status.HTTP_200_OK)
 
+class SDWANSoftwareViewSet(viewsets.ModelViewSet):
+    queryset = SDWANSoftware.objects.all()
+    serializer_class = SDWANSoftwareSerializer
 
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
 
-class TagViewSet(viewsets.ModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+class ShareTagViewSet(viewsets.ModelViewSet):
+    queryset = ShareTag.objects.all()
+    serializer_class = ShareTagSerializer
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
@@ -132,3 +137,23 @@ class ESPPFSViewSet(viewsets.ModelViewSet):
 class RoutingProtocolViewSet(viewsets.ModelViewSet):
     queryset = RoutingProtocol.objects.all()
     serializer_class = RoutingProtocolSerializer
+
+class InterfaceTypeViewSet(viewsets.ModelViewSet):
+    queryset = InterfaceType.objects.all()
+    serializer_class = InterfaceTypeSerializer
+
+class InterfaceRoleViewSet(viewsets.ModelViewSet):
+    queryset = InterfaceRole.objects.all()
+    serializer_class = InterfaceRoleSerializer
+
+class VRFRoleViewSet(viewsets.ModelViewSet):
+    queryset = VRFRole.objects.all()
+    serializer_class = VRFRoleSerializer
+
+class LACPHashOptionViewSet(viewsets.ModelViewSet):
+    queryset = LACPHashOption.objects.all()
+    serializer_class = LACPHashOptionSerializer
+
+class DeviceModelViewSet(viewsets.ModelViewSet):
+    queryset = DeviceModel.objects.all()
+    serializer_class = DeviceModelSerializer
