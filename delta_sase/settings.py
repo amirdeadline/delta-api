@@ -1,8 +1,9 @@
-# Django settings for delta_api project.
+# Django settings for delta_sase project.
 import sys
 import os
+from django.conf import settings
 
-
+MACHINE_ID = '1234'
 DEBUG = True
 
 ADMINS = (
@@ -33,10 +34,10 @@ sys.path.insert(0, TENANT_APPS_DIR)
 DATABASES = {
     'default': {
         'ENGINE': 'django_tenants.postgresql_backend',  # Add 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.environ.get('DATABASE_DB', 'delta_api'),
-        'USER': os.environ.get('DATABASE_USER', 'delta_api'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'qwerty'),
-        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+        'NAME': os.environ.get('DATABASE_DB', 'postgres'),
+        'USER': os.environ.get('DATABASE_USER', 'admin'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'admin'),
+        'HOST': os.environ.get('DATABASE_HOST', '10.1.1.21'),
         'PORT': os.environ.get('DATABASE_PORT', '5432'),
     }
 }
@@ -144,7 +145,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
-                'delta_api.context_processors.settings',
+                'delta_sase.context_processors.settings',
             ],
             'loaders': (
                 'django.template.loaders.filesystem.Loader',
@@ -154,11 +155,11 @@ TEMPLATES = [
         },
     },
 ]
-ROOT_URLCONF = 'delta_api.urls_tenants'
-PUBLIC_SCHEMA_URLCONF = 'delta_api.urls_public'
+ROOT_URLCONF = 'delta_sase.urls_tenants'
+PUBLIC_SCHEMA_URLCONF = 'delta_sase.urls_public'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'delta_api.wsgi.application'
+WSGI_APPLICATION = 'delta_sase.wsgi.application'
 
 SHARED_APPS = (
     'django_tenants',  # mandatory
@@ -173,7 +174,8 @@ SHARED_APPS = (
     'channels',
     'rest_framework',
     'celery',
-    'staging_app',
+    'polymorphic',
+    # 'staging_app',
     # 'tenants_app.apps.TenantsAppConfig',
 )
 
@@ -184,29 +186,30 @@ TENANT_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'base',
-    'sites_app',
-    'devices_app',
-    'interfaces_app',
-    'routes_app',
+    'resources_app',
+    # 'sites_app',
+    # 'devices_app',
+    # 'interfaces_app',
+    # 'routes_app',
     # 'templates_app',
-    'profiles_app',
-    'security_policies_app',
-    'routing_policies_app',
-    'qos_policies_app',
-    'nat_policies_app',
-    'events_app',
-    'remote_access_app',
-    'general_settings_app',
-    'auth_settings_app',
-    'config_manager_app',
-    'monitor_app',
-    'objects_app',
-    'custom_vpn_app',
-    'dashboard_app',
-    'cli_app',
-    'network_app',
-    'vpn_app',
-    'auth_policies_app',
+    # 'profiles_app',
+    # 'security_policies_app',
+    # 'routing_policies_app',
+    # 'qos_policies_app',
+    # 'nat_policies_app',
+    # 'events_app',
+    # 'remote_access_app',
+    # 'general_settings_app',
+    # 'auth_settings_app',
+    # 'config_manager_app',
+    # 'monitor_app',
+    # 'objects_app',
+    # 'custom_vpn_app',
+    # 'dashboard_app',
+    # 'cli_app',
+    # 'network_app',
+    # 'vpn_app',
+    # 'auth_policies_app',
 )
 
 TENANT_MODEL = "tenants_app.Tenant"  # app.Model
@@ -325,4 +328,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
 CELERY_BROKER_URL = os.environ.get('CELERY_URL', 'redis://localhost:6379/0'),
-CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'delta_api')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'delta_sase')

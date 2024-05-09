@@ -7,6 +7,6 @@ from django.contrib import admin
 urlpatterns = [
     # path('', HomeView.as_view()),
     path('admin/', admin.site.urls),
-    path('manage/staging/', include('staging_app.urls')),
-    path('manage/', include('tenants_app.urls')),
+    # path('api/v1/manage/staging/', include('staging_app.urls')),
+    path('api/v1/', include('tenants_app.urls')),
 ]

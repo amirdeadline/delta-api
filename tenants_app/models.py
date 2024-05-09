@@ -3,10 +3,9 @@ from django.db import models ,transaction
 from django_tenants.models import TenantMixin, DomainMixin
 from django.core.exceptions import ValidationError  # Import ValidationError
 from django.db.models import Max
-import logging
 from django.utils import timezone
 from django.utils.deprecation import MiddlewareMixin
-
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +22,7 @@ class ShareBase(models.Model):
     modified_by = models.CharField(max_length=100, null=True, blank=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
     deleted_by = models.CharField(max_length=100, null=True, blank=True)
-    detail = models.JSONField()
+    detail = models.JSONField(null=True, blank=True)
     active = models.BooleanField(default=True)
 
     class Meta:
@@ -51,7 +50,7 @@ class ShareTag(models.Model):
 
 class SDWANSoftware(ShareBase):
     version = models.CharField(max_length=100, db_index=True)  # Adding an index
-    tags = models.ManyToManyField(ShareTag, related_name='sdwan_software_tags')
+    tags = models.ManyToManyField(ShareTag, related_name='sdwan_software_tags', null=True, blank=True)
     production = models.BooleanField(default=True)
     url= models.URLField()
 
@@ -59,10 +58,10 @@ class SDWANSoftware(ShareBase):
         return f"{self.name} v{self.version}"
 
 class Product(ShareBase):
-    unit = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    category = models.ForeignKey('ProductCategory', on_delete=models.SET_NULL)
-    tags = models.ManyToManyField(ShareTag, related_name='products_tags')
+    unit = models.CharField(max_length=100, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    category = models.ForeignKey('ProductCategory', on_delete=models.SET_NULL, null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='products_tags', null=True, blank=True)
     
     def __str__(self):
         return self.name
@@ -77,14 +76,14 @@ class ProductCategory(ShareBase):
 class License(ShareBase):
     unit = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    tags = models.ManyToManyField(ShareTag, related_name='licenses')
+    tags = models.ManyToManyField(ShareTag, related_name='licenses', null=True, blank=True)
     
     def __str__(self):
         return self.name
 
 class Region(ShareBase):
     cloud = models.CharField(max_length=100)
-    tags = models.ManyToManyField(ShareTag, related_name='regions')
+    tags = models.ManyToManyField(ShareTag, related_name='regions', null=True, blank=True)
     
     def __str__(self):
         return self.name
@@ -98,7 +97,7 @@ class SCE(ShareBase):
     certificate = models.TextField()
     enabled = models.BooleanField(default=True)
     dedicated = models.BooleanField(default=False)
-    tags = models.ManyToManyField(ShareTag, related_name='sces')
+    tags = models.ManyToManyField(ShareTag, related_name='sces', null=True, blank=True)
     
     def __str__(self):
         return self.name
@@ -112,7 +111,7 @@ class SASEController(ShareBase):
     certificate = models.TextField()
     enabled = models.BooleanField(default=True)
     dedicated = models.BooleanField(default=False)
-    tags = models.ManyToManyField(ShareTag, related_name='sase_controllers')
+    tags = models.ManyToManyField(ShareTag, related_name='sase_controllers', null=True, blank=True)
     
     def __str__(self):
         return self.name
@@ -126,7 +125,7 @@ class SDWANController(ShareBase):
     certificate = models.TextField()
     enabled = models.BooleanField(default=True)
     dedicated = models.BooleanField(default=False)
-    tags = models.ManyToManyField(ShareTag, related_name='sdwan_controllers')
+    tags = models.ManyToManyField(ShareTag, related_name='sdwan_controllers', null=True, blank=True)
     
     def __str__(self):
         return self.name
@@ -136,28 +135,24 @@ class Contact(ShareBase):
     email = models.EmailField(max_length=200, unique=True)
     number = models.CharField(max_length=15, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
-    tags = models.ManyToManyField(ShareTag, related_name='contacts_tags')
+    tags = models.ManyToManyField(ShareTag, related_name='contacts_tags', null=True, blank=True)
     
     def __str__(self):
         return self.name
-
 
 class Customer(models.Model):
     name = models.CharField(unique=True, max_length=200, db_index=True)
     company_name = models.CharField(max_length=200, null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    contacts = models.ManyToManyField(Contact, related_name='customers_contacts')
-    tags = models.ManyToManyField(ShareTag, related_name='customers_tags')
+    tags = models.ManyToManyField(ShareTag, related_name='customers_tags', null=True, blank=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
-
 class AdminUser(ShareBase):
     username = models.CharField(max_length=255)
     external_id = models.CharField(max_length=255)  # Keycloak UUID for the user
-
 
 class Tenant(TenantMixin):
     tenant_id = models.IntegerField(unique=True, db_index=True)
@@ -175,12 +170,12 @@ class Tenant(TenantMixin):
     enabled = models.BooleanField(default=True)
     production = models.BooleanField(default=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-    detail = models.JSONField()
+    detail = models.JSONField(null=True, blank=True)
     admins = models.ManyToManyField('AdminUser', related_name='tenant_admins')
     products = models.ManyToManyField(Product, related_name='tenant_products')
     licenses = models.ManyToManyField(License, related_name='tenant_licenses')
     softwares = models.ManyToManyField(SDWANSoftware, related_name='tenant_softwares')
-    tags = models.ManyToManyField(ShareTag, related_name='tenants_tags')
+    tags = models.ManyToManyField(ShareTag, related_name='tenants_tags', null=True, blank=True)
     config = models.URLField(blank=True)
 
     def __str__(self):
@@ -191,6 +186,7 @@ class Tenant(TenantMixin):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
+        user_id = kwargs.pop('user_id', None)
         try:
             if self.schema_name == "public":
                 logger.debug("Setting schema name to 'public'")
@@ -208,6 +204,9 @@ class Tenant(TenantMixin):
                     else:
                         self.tenant_id = max_id + 1
                     self.schema_name = 'Tenant_' + str(self.tenant_id)
+                    self.created_by = user_id
+                else:
+                    self.modified_by = user_id
 
             super(Tenant, self).save(*args, **kwargs)
         except Exception as e:
@@ -228,7 +227,6 @@ class Tenant(TenantMixin):
 
 class Domain(DomainMixin):
     pass
-
 
 class IKEEncryption(models.Model):
     name = models.CharField(max_length=255)

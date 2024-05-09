@@ -1,12 +1,10 @@
 # base/serializers.py
 from rest_framework import serializers
-from .models import Tag, Secret, AvailableOverlayIP, BaseModel, CandidateConfig, SnapshotConfig, Address, Contact, TenantSetting
+from .models import Tag, AvailableOverlayIP, BaseModel, CandidateConfig, SnapshotConfig, TenantSetting
 from django.core.exceptions import ValidationError
-from django.db import transaction
 import logging
 
 logger = logging.getLogger(__name__)
-
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,12 +21,17 @@ class ErrorHandlingMixin:
 
 class BaseModelSerializer(ErrorHandlingMixin, serializers.ModelSerializer):
     tags = TagSerializer(many=True)
+    object_id = serializers.CharField(read_only=True) 
+    uuid = serializers.CharField(read_only=True) 
+    created_by = serializers.CharField(read_only=True)
+    modified_by = serializers.CharField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)  # Ensure created_at is read-only
+    modified_at = serializers.DateTimeField(read_only=True)  # Ensure modified_at is read-only
 
     class Meta:
         model = BaseModel
         exclude = ['id']
-        read_only_fields = ['uuid']
-        abstract = True
+        read_only_fields = ['uuid', 'object_id', 'created_at', 'modified_at', 'modified_by', 'created_by']    
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags', [])
@@ -51,11 +54,6 @@ class BaseModelSerializer(ErrorHandlingMixin, serializers.ModelSerializer):
             )
             instance.tags.add(tag)
 
-class SecretSerializer(BaseModelSerializer):
-    class Meta:
-        model = Secret
-        exclude = ['id']
-
 class AvailableOverlayIPSerializer(serializers.ModelSerializer):
     class Meta:
         model = AvailableOverlayIP
@@ -64,27 +62,30 @@ class AvailableOverlayIPSerializer(serializers.ModelSerializer):
 class CandidateConfigSerializer(BaseModelSerializer):
     class Meta:
         model = CandidateConfig
-        exclude = ['id']
+        # exclude = ['id']
 
 class SnapshotConfigSerializer(BaseModelSerializer):
     class Meta:
         model = SnapshotConfig
-        exclude = ['id']
+        # exclude = ['id']
 
-class AddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Address
-        exclude = ['id']
+# class AddressSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Address
+#         # exclude = ['id']
 
-class ContactSerializer(serializers.ModelSerializer):
+# class ContactSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Contact
+#         # exclude = ['id']
+
+class SettingSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Contact
-        exclude = ['id']
+        model = TenantSetting
+        # exclude = ['id']
 
 class TenantSettingSerializer(serializers.ModelSerializer):
     class Meta:
         model = TenantSetting
-        exclude = ['id']
-
-
+        fields = ['key', 'value']
         

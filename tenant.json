@@ -6,11 +6,7 @@
    "customer_id":"556688",
    "customer_name":"TEST Customer",
    "parent":"",
-   "products":[
-       "SDWAN",
-       "SASE_RU",
-       "SASE_Branch"
-   ],
+   "products":["SDWAN","SASE_RU","SASE_Branch"],
    "licenses":{
        "sdwan":{
           
@@ -3319,8 +3315,9 @@
                            }
                        }
                    }
-               }
-           }
-       }    
+               
+            }
+         }
+      }    
    }
 }

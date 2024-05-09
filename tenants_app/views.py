@@ -1,5 +1,5 @@
 # tenants_app/views.py
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import (Product, ProductCategory, License, Region, SCE, SASEController,
@@ -20,7 +20,6 @@ from django.db import connection
 from django.db.utils import ProgrammingError
 import logging
 from .default_settings import copy_data_from_default
-import serializers
 
 logger = logging.getLogger(__name__)
 

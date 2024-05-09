@@ -1,15 +1,63 @@
 # tenants_app/serializers.py
 from rest_framework import serializers
-from .models import (Product, ProductCategory, License, Region, SCE, SASEController,
+from .models import (ShareBase, Product, ProductCategory, License, Region, SCE, SASEController,
                      SDWANController, Contact, Customer, AdminUser, Tenant, ShareTag,
-                     IKEEncryption, IKEHash, IKEDHGroup, IKERPF, ESPEncryption, ShareTag,
+                     IKEEncryption, IKEHash, IKEDHGroup, IKERPF, ESPEncryption,
                      InterfaceType, InterfaceRole, VRFRole, LACPHashOption, DeviceModel,
                      ESPHash, ESPDHGroup, ESPPFS, RoutingProtocol, SDWANSoftware)
+from django.core.exceptions import ValidationError  # Import ValidationError
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ShareTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShareTag
-        fields = '__all__'
+        fields = ['key', 'value']
+
+class ErrorHandlingMixin:
+    def is_valid(self, raise_exception=False):
+        try:
+            super().is_valid(raise_exception=True)
+        except ValidationError as e:
+            logger.error(f"Validation error: {e.detail}")
+            raise ValidationError({'error': 'Validation failed', 'details': e.detail})
+
+class SharedBaseModelSerializer(ErrorHandlingMixin, serializers.ModelSerializer):
+    tags = ShareTagSerializer(many=True, required=False)
+    object_id = serializers.CharField(read_only=True) 
+    uuid = serializers.CharField(read_only=True) 
+    created_by = serializers.CharField(read_only=True)
+    modified_by = serializers.CharField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)  # Ensure created_at is read-only
+    modified_at = serializers.DateTimeField(read_only=True)  # Ensure modified_at is read-only
+
+    class Meta:
+        model = ShareBase
+        exclude = ['id']
+        read_only_fields = ['uuid', 'object_id', 'created_at', 'modified_at', 'modified_by', 'created_by']    
+
+    def create(self, validated_data):
+        tags_data = validated_data.pop('tags', [])
+        instance = super().create(validated_data)
+        self.update_or_create_tags(instance, tags_data)
+        return instance
+
+    def update(self, instance, validated_data):
+        tags_data = validated_data.pop('tags', [])
+        instance = super().update(instance, validated_data)
+        self.update_or_create_tags(instance, tags_data)
+        return instance
+
+    def update_or_create_tags(self, instance, tags_data):
+        instance.tags.clear()
+        for tag_data in tags_data:
+            tag, created = Tag.objects.get_or_create(
+                key=tag_data['key'],
+                defaults={'value': tag_data['value']}
+            )
+            instance.tags.add(tag)
+
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -132,21 +180,47 @@ class RoutingProtocolSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TenantSerializer(serializers.ModelSerializer):
-    admins = AdminUserSerializer(many=True, read_only=True)
-    products = ProductSerializer(many=True, read_only=True)
-    licenses = LicenseSerializer(many=True, read_only=True)
-    softwares = SDWANSoftwareSerializer(many=True, read_only=True)
-    tags = ShareTagSerializer(many=True)
-
+    admins = AdminUserSerializer(many=True, required=False)
+    products = ProductSerializer(many=True, required=False)
+    licenses = LicenseSerializer(many=True, required=False)
+    softwares = SDWANSoftwareSerializer(many=True, required=False)
+    tags = ShareTagSerializer(many=True, required=False)
+    
     class Meta:
         model = Tenant
         fields = '__all__'
         read_only_fields = ('schema_name', 'tenant_id')  # Make these fields read-only
 
     def create(self, validated_data):
-        # Custom creation logic can be added here if necessary
-        return super().create(validated_data)
+        admins_data = validated_data.pop('admins', [])
+        products_data = validated_data.pop('products', [])
+        licenses_data = validated_data.pop('licenses', [])
+        softwares_data = validated_data.pop('softwares', [])
+        tags_data = validated_data.pop('tags', [])
+            
+        tenant = Tenant.objects.create(**validated_data)
 
+        for admin_data in admins_data:
+            admin, created = AdminUser.objects.get_or_create(**admin_data)
+            tenant.admins.add(admin)
+
+        for product_data in products_data:
+            product, created = Product.objects.get_or_create(**product_data)
+            tenant.products.add(product)
+
+        for license_data in licenses_data:
+            license, created = License.objects.get_or_create(**license_data)
+            tenant.licenses.add(license)
+
+        for software_data in softwares_data:
+            software, created = SDWANSoftware.objects.get_or_create(**software_data)
+            tenant.softwares.add(software)
+
+        for tag_data in tags_data:
+            tag, created = ShareTag.objects.get_or_create(**tag_data)
+            tenant.tags.add(tag)
+
+        return tenant
     def update(self, instance, validated_data):
         # Custom update logic, can ensure schema_name and tenant_id are not updated
         # This is just extra safeguarding; 'read_only_fields' already handles it

@@ -19,18 +19,19 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR('Tenant with schema_name reserved1000 already exists.'))
             return
         
+        
         # get or create customer
-        customer, created = Customer.objects.get_or_create(
-            email='admin@deltasase.com',
-            defaults={
-                'name': 'DeltaSASE LLC',
-                'contact_number': '5134432021',
-                'company_name': 'DeltaSASE LLC',
-                'company_address': 'Test Address',
-            }
-        )
+        customer = Customer.objects.get(name= "DeltaSASE LLC").id
+            # email='admin@deltasase.com',
+            # defaults={
+            #     'name': 'DeltaSASE LLC',
+            #     'contact_number': '5134432021',
+            #     'company_name': 'DeltaSASE LLC',
+            #     'company_address': 'Test Address',
+            # }
+        # )
 
-        tenant = Tenant(schema_name="reserved1000", name="Reserved 1000", customer_id=customer)
+        tenant = Tenant(schema_name="reserved1000", name="Reserved 1000", customer_id=customer, detail={})
         tenant.save()
 
         # Add one or more domains for the tenant

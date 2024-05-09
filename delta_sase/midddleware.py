@@ -1,4 +1,5 @@
 import logging
+from django.http import JsonResponse
 
 class LoggingMiddleware:
     def __init__(self, get_response):
