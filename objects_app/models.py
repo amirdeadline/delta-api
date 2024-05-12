@@ -8,8 +8,7 @@ from django.utils import timezone
 from django.utils.deprecation import MiddlewareMixin
 from django.core.exceptions import ValidationError 
 from django.core.validators import MaxValueValidator
-from base.models import BaseModel
-from polymorphic.models import PolymorphicModel
+from base.models import BaseModel ,BasePolymorphic
 
 import logging
 
@@ -23,29 +22,33 @@ class ObjectBase(BaseModel):
     class Meta:
         abstract = True
 
+class ObjectPolymorphic(BasePolymorphic):
+    name = models.CharField(max_length=255)
+    description = models.TextField(verbose_name="Description", blank=True, null=True)
+    detail = JSONField()
 
+    class Meta:
+        abstract = True
+        
 class Zone(ObjectBase):
     role= models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
-class Address(ObjectBase, PolymorphicModel):
-    start_address = models.CharField(max_length=255)
-    end_address = models.CharField(max_length=255, blank=True, null=True)  # Optional for non-range types
-    mask = models.CharField(max_length=3, blank=True, null=True)  # Optional for non-range types
+class Address(ObjectPolymorphic):
+    address = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
 
 class AddressSubnet(Address):
     type = models.CharField(max_length=20, default='subnet')
-    address = models.CharField(max_length=255)
     mask = models.CharField(max_length=3, blank=True, null=True)
 
 class AddressRange(Address):
     type = models.CharField(max_length=20, default='range')
-    address_range = models.CharField(max_length=255)
+    end_address = models.CharField(max_length=255)
     
 class AddressGroup(ObjectBase):
     addresses = models.ManyToManyField(Address)

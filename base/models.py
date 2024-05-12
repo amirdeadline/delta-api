@@ -7,14 +7,12 @@ import random
 from threading import Lock
 from django.core.exceptions import ValidationError 
 from polymorphic.models import PolymorphicModel, PolymorphicManager
-from django.conf import settings
+import os
 import logging
 
 logger = logging.getLogger(__name__)
 
-sequence_lock = Lock()
-last_timestamp = None
-sequence_number = 0
+MACHINE_ID = os.environ.get('MACHINE_ID', '')
 
 OBJECT_TYPE_CODES = {
     'BaseModel': '00000',  # Override in subclasses with specific codes
@@ -64,7 +62,6 @@ class BaseModel(models.Model):
             self.object_id = generate_unique_id(self.__class__.__name__)
         super().save(*args, **kwargs)
 
-
 class BasePolymorphic(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.CharField(max_length=100, null=True, blank=True)
@@ -89,8 +86,6 @@ class BasePolymorphic(models.Model):
             # Using the class name as the object type for ID generation
             self.object_id = generate_unique_id(self.__class__.__name__)
         super().save(*args, **kwargs)
-
-
 
 class AvailableOverlayIP(models.Model):
     address=models.GenericIPAddressField(protocol='ipv4', unique=True, primary_key=True)

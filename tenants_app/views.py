@@ -2,9 +2,11 @@
 from rest_framework import viewsets, status, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.utils import timezone
+from django.db import transaction
 from .models import (Product, ProductCategory, License, Region, SCE, SASEController,
                      SDWANController, Contact, Customer, AdminUser, Tenant, ShareTag,
-                     IKEEncryption, IKEHash, IKEDHGroup, IKERPF, ESPEncryption,
+                     IKEEncryption, IKEHash, IKEDHGroup, IKERPF, ESPEncryption, DeletedTenant,
                      InterfaceType, InterfaceRole, VRFRole, LACPHashOption, DeviceModel,
                      ESPHash, ESPDHGroup, ESPPFS, RoutingProtocol, Domain, SDWANSoftware)
 from .serializers import (ProductSerializer, ProductCategorySerializer, LicenseSerializer,
@@ -37,12 +39,26 @@ class TenantViewSet(viewsets.ModelViewSet):
         except Exception as e:
             logger.error(f"Failed to create tenant or domain: {str(e)}")
             raise serializers.ValidationError("Failed to create tenant or domain")
-
+    @transaction.atomic
     def perform_destroy(self, instance):
         try:
-            instance.domains.all().delete()  # Assume domains related to instance
-            instance.delete(force_drop=True)
-            logger.info(f"Deleted tenant {instance.name} and associated data.")
+            logger.info(f"Attempting to delete tenant: {instance.name}")
+            DeletedTenant.objects.create(
+                tenant_id=instance.tenant_id,
+                schema_name=instance.schema_name,
+                name=instance.name,
+                description=instance.description,
+                deleted_by=self.request.user_id,
+                deleted_at=timezone.now(),
+                customer=instance.customer,
+                config=instance.config,
+                snapshot=instance.snapshot,
+                detail=instance.detail
+            )
+            # This deletes the domain and tenant, including dropping the schema if auto_drop_schema is True
+            instance.domains.all().delete()  # Clean up related domains first
+            instance.delete()  # This should also drop the schema due to auto_drop_schema being True
+            logger.info(f"Hard deleted tenant {instance.name} and its schema.")
         except Exception as e:
             logger.error(f"Failed to delete tenant {instance.name}: {str(e)}")
             raise serializers.ValidationError("Failed to delete tenant")
@@ -52,6 +68,14 @@ class TenantViewSet(viewsets.ModelViewSet):
         tenant = self.get_object()
         children = TenantSerializer(tenant.get_children(), many=True).data
         return Response(children, status=status.HTTP_200_OK)
+
+    def get_serializer_context(self):
+        """
+        Extra context provided to the serializer class.
+        """
+        context = super(TenantViewSet, self).get_serializer_context()
+        context['user_id'] = self.request.user_id  # Assuming `user_id` is set in the request by middleware
+        return context
 
 class SDWANSoftwareViewSet(viewsets.ModelViewSet):
     queryset = SDWANSoftware.objects.all()

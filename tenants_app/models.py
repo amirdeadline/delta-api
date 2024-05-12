@@ -9,13 +9,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class UserMiddleware(MiddlewareMixin):
-    def process_request(self, request):
-        user_id = request.headers.get('user_id')
-        setattr(request, 'user_id', user_id)
-
 class ShareBase(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.CharField(max_length=100, null=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -42,14 +37,13 @@ class ShareBase(models.Model):
         super().delete(*args, **kwargs)
 
 class ShareTag(models.Model):
-    key = models.CharField(max_length=100, unique=True)
+    key = models.CharField(max_length=100)
     value = models.JSONField()
     
     def __str__(self):
         return f"{self.key}: {self.value}"
 
 class SDWANSoftware(ShareBase):
-    version = models.CharField(max_length=100, db_index=True)  # Adding an index
     tags = models.ManyToManyField(ShareTag, related_name='sdwan_software_tags', null=True, blank=True)
     production = models.BooleanField(default=True)
     url= models.URLField()
@@ -132,11 +126,15 @@ class SDWANController(ShareBase):
 
 class Contact(ShareBase):
     customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
-    email = models.EmailField(max_length=200, unique=True)
+    email = models.EmailField(max_length=200)
     number = models.CharField(max_length=15, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(ShareTag, related_name='contacts_tags', null=True, blank=True)
-    
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = ('name', 'customer')
+
     def __str__(self):
         return self.name
 
@@ -163,8 +161,6 @@ class Tenant(TenantMixin):
     created_by = models.CharField(max_length=100, null=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=100, null=True, blank=True)
-    deleted_at = models.DateTimeField(null=True, blank=True)
-    deleted_by = models.CharField(max_length=100, null=True, blank=True)
     snapshot = models.TextField(max_length=200, null=True, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     enabled = models.BooleanField(default=True)
@@ -177,6 +173,7 @@ class Tenant(TenantMixin):
     softwares = models.ManyToManyField(SDWANSoftware, related_name='tenant_softwares')
     tags = models.ManyToManyField(ShareTag, related_name='tenants_tags', null=True, blank=True)
     config = models.URLField(blank=True)
+    auto_drop_schema = True
 
     def __str__(self):
         return self.schema_name
@@ -186,7 +183,6 @@ class Tenant(TenantMixin):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
-        user_id = kwargs.pop('user_id', None)
         try:
             if self.schema_name == "public":
                 logger.debug("Setting schema name to 'public'")
@@ -204,111 +200,120 @@ class Tenant(TenantMixin):
                     else:
                         self.tenant_id = max_id + 1
                     self.schema_name = 'Tenant_' + str(self.tenant_id)
-                    self.created_by = user_id
-                else:
-                    self.modified_by = user_id
-
+                    
             super(Tenant, self).save(*args, **kwargs)
         except Exception as e:
             logger.error("Error saving tenant: %s", e)
             raise
     @transaction.atomic
     def delete(self, *args, **kwargs):
-        user_id = kwargs.pop('user_id', None)
         if self.children.exists():
             logger.error("Attempt to delete tenant with existing children")
             raise Exception("Cannot delete tenant because it has child tenants.")
         if self.enabled:
             logger.error("Attempt to delete tenant that is enabled")
             raise Exception("Cannot delete tenant because it is currently enabled.")
-        self.deleted_at = timezone.now()
-        self.deleted_by = user_id
-        self.save()
+        super(Tenant, self).delete(*args, **kwargs)
 
 class Domain(DomainMixin):
     pass
 
 class IKEEncryption(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
 
 class IKEHash(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
 
 class IKEDHGroup(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
 
 class IKERPF(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
 
 class ESPEncryption(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
 
 class ESPHash(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
 
 class ESPDHGroup(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
 
 class ESPPFS(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
 
 class RoutingProtocol(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
 
 class InterfaceType(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
     
 class InterfaceRole(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
     
 class VRFRole(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
     
 class LACPHashOption(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
     
 class DeviceModel(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
     
+class DeletedTenant(models.Model):
+    tenant_id = models.IntegerField(db_index=True)
+    schema_name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, db_index=True)
+    description = models.TextField(max_length=200, null=True, blank=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_by = models.CharField(max_length=100, null=True, blank=True)
+    snapshot = models.TextField(max_length=200, null=True, blank=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    config = models.URLField(blank=True)
+    detail = models.JSONField(null=True, blank=True)
+    
+
+    def __str__(self):
+        return self.schema_name

@@ -1,6 +1,7 @@
 # Django settings for delta_sase project.
 import sys
 import os
+from dotenv import load_dotenv
 from django.conf import settings
 
 MACHINE_ID = '1234'
@@ -29,7 +30,7 @@ sys.path.insert(0, TENANT_APPS_DIR)
 #         'PORT': '5433',
 #     }
 # }
-
+load_dotenv() 
 
 DATABASES = {
     'default': {
@@ -113,17 +114,18 @@ DATABASE_ROUTERS = (
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-MIDDLEWARE = (
+MIDDLEWARE = [
     'django_tenants.middleware.TenantSubfolderMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'tenants_app.middleware.JWTAuthenticationMiddleware',
+    'tenants_app.middleware.ExceptionHandlingMiddleware',
+    'tenants_app.middleware.LoggingMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'base.middleware.ExceptionHandlingMiddleware',
-)
+]
 
 TEMPLATES = [
     {
@@ -218,9 +220,11 @@ TENANT_DOMAIN_MODEL = "tenants_app.Domain"  # app.Model
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
+AUTO_DROP_SCHEMA= True
+
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
-TENANT_SUBFOLDER_PREFIX = "tenant"
+TENANT_SUBFOLDER_PREFIX = "tenants"
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
@@ -329,3 +333,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 CELERY_BROKER_URL = os.environ.get('CELERY_URL', 'redis://localhost:6379/0'),
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'delta_sase')
+
+#Keycloak and JWT token Environment variables
+DEFAULT_PUB_KEY = """
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAly2mtHbJdSB4umYogMBO
+obeYjEK6yq4jQzkFfTVYH1qKcL/4Qw/nLsBkAXL3CCb7eYKq4vqFrHE3g/KKbYsB
+gkRePAZDensddFBDviFOxAyRn7WuH3d15KCm9SvyiWIC9JQlJJSk/1oHD0H/WP8S
+RmPXZ4dL3tCu6sTT6VcLXOPdSR5N22tuUSlY2cMLYzVvDacOhvrvGZIN5ALPfRqv
+NtCTH2dXznNt+9ZHwJE3O3tlTrp1Pl2QBkb8xMv87sMYGUDLFLbAxhJEmXhenlGP
+vMzYVWcSMvj5JPpez6FNXlBb7MegCVLl+pPBlryHB2H9JrELK4qG3V0QhnlHXr5V
+/QIDAQAB
+-----END PUBLIC KEY-----
+"""
+KEYCLOAK_PUBLIC_KEY = os.getenv('KEYCLOAK_PUBLIC_KEY', DEFAULT_PUB_KEY)
+JWT_AUDIENCE = os.getenv('JWT_AUDIENCE', 'default-audience-if-not-set')

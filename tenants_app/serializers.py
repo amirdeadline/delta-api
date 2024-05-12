@@ -31,7 +31,7 @@ class SharedBaseModelSerializer(ErrorHandlingMixin, serializers.ModelSerializer)
     modified_by = serializers.CharField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)  # Ensure created_at is read-only
     modified_at = serializers.DateTimeField(read_only=True)  # Ensure modified_at is read-only
-
+    
     class Meta:
         model = ShareBase
         exclude = ['id']
@@ -52,7 +52,7 @@ class SharedBaseModelSerializer(ErrorHandlingMixin, serializers.ModelSerializer)
     def update_or_create_tags(self, instance, tags_data):
         instance.tags.clear()
         for tag_data in tags_data:
-            tag, created = Tag.objects.get_or_create(
+            tag, created = ShareTag.objects.get_or_create(
                 key=tag_data['key'],
                 defaults={'value': tag_data['value']}
             )
@@ -197,9 +197,30 @@ class TenantSerializer(serializers.ModelSerializer):
         licenses_data = validated_data.pop('licenses', [])
         softwares_data = validated_data.pop('softwares', [])
         tags_data = validated_data.pop('tags', [])
-            
-        tenant = Tenant.objects.create(**validated_data)
+        user_id = self.context.get('user_id')
+        print("USER_ID is : ",user_id)
 
+        # Create the Tenant object and manually set `created_by` and `modified_by`
+        tenant = Tenant(**validated_data)
+        if user_id:
+            tenant.created_by = user_id
+            tenant.modified_by = user_id
+        tenant.save()
+
+        self._handle_related_objects(tenant, admins_data, products_data, licenses_data, softwares_data, tags_data)
+        return tenant
+    
+    def update(self, instance, validated_data):
+        # Custom update logic, can ensure schema_name and tenant_id are not updated
+        # This is just extra safeguarding; 'read_only_fields' already handles it
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        user_id = self.context.get('user_id')
+        instance.modified_by = user_id
+        # Ensure no updates to schema_name or tenant_id here
+        return super().update(instance, validated_data)
+
+    def _handle_related_objects(self, tenant, admins_data, products_data, licenses_data, softwares_data, tags_data):
         for admin_data in admins_data:
             admin, created = AdminUser.objects.get_or_create(**admin_data)
             tenant.admins.add(admin)
@@ -219,16 +240,6 @@ class TenantSerializer(serializers.ModelSerializer):
         for tag_data in tags_data:
             tag, created = ShareTag.objects.get_or_create(**tag_data)
             tenant.tags.add(tag)
-
-        return tenant
-    def update(self, instance, validated_data):
-        # Custom update logic, can ensure schema_name and tenant_id are not updated
-        # This is just extra safeguarding; 'read_only_fields' already handles it
-        instance.name = validated_data.get('name', instance.name)
-        instance.description = validated_data.get('description', instance.description)
-        # Ensure no updates to schema_name or tenant_id here
-        return super().update(instance, validated_data)
-    
 
 class CustomerSerializer(serializers.ModelSerializer):
     contacts = ContactSerializer(many=True, read_only=True)

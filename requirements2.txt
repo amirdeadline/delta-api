@@ -20,3 +20,4 @@ django-netfields
 requests
 django-polymorphic
 ipaddress
+pyjwt
