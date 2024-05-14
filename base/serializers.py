@@ -77,15 +77,20 @@ class BaseModelSerializer(ErrorHandlingMixin, serializers.ModelSerializer):
 class SnapshotConfigSerializer(BaseModelSerializer):
     class Meta(BaseModelSerializer.Meta):
         model = SnapshotConfig
-        exclude = BaseModelSerializer.Meta.exclude + ['path']
+        exclude = BaseModelSerializer.Meta.exclude + ['url']
 
 class CandidateConfigSerializer(BaseModelSerializer):
+    base_snapshot = serializers.SerializerMethodField(read_only=True)
+
     class Meta(BaseModelSerializer.Meta):
         model = CandidateConfig
-        read_only_fields = BaseModelSerializer.Meta.read_only_fields + ['base_path', 'committed_by', 'committed_at']
-        exclude = BaseModelSerializer.Meta.exclude + ['path']
+        read_only_fields = BaseModelSerializer.Meta.read_only_fields + ['base_snapshot','base_path', 'committed_by', 'committed_at']
+        exclude = BaseModelSerializer.Meta.exclude
 
-
+    def get_base_snapshot(self, obj):
+        if obj.base_snapshot:
+            return obj.base_snapshot.object_id
+        return None
 
 class AvailableOverlayIPSerializer(serializers.ModelSerializer):
     class Meta:

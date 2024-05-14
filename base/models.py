@@ -45,8 +45,7 @@ class BaseModel(models.Model):
     created_by = models.CharField(max_length=100)
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=100, null=True, blank=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, )
-    # tags = models.ManyToManyField(Tag, blank=True, null=True, related_name="%(class)s_tags")
+    # uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, )
     object_id = models.BigIntegerField(unique=True, editable=False, db_index=True)
 
     class Meta:
@@ -59,47 +58,24 @@ class BaseModel(models.Model):
 
 class BasePolymorphic(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.CharField(max_length=100, null=True, blank=True)
+    created_by = models.CharField(max_length=100)
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=100, null=True, blank=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, )
-    object_id = models.CharField(max_length=16, unique=True, editable=False, db_index=True)
+    # uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, )
+    object_id = models.BigIntegerField(unique=True, editable=False, db_index=True)
     objects = PolymorphicManager()
 
     class Meta:
         abstract = True
 
     def save(self, *args, **kwargs):
-        user_id = kwargs.pop('user_id', None)  # Receive user_id from the view
-        if not self.pk:  # Object is being created
-            self.created_by = user_id
-        self.modified_by = user_id
-        if self.tags.count() > 5:
-            raise ValidationError("Maximum number of tags exceeded (5 tags allowed).")
-        if not self.object_id:
-            # Using the class name as the object type for ID generation
+        if not self.pk: 
             self.object_id = generate_unique_id(self.__class__.__name__)
-        super().save(*args, **kwargs)
-
-class AvailableOverlayIP(models.Model):
-    address=models.GenericIPAddressField(protocol='ipv4', unique=True, primary_key=True)
-
-class CandidateConfig(BaseModel):
-    name = models.CharField(max_length=255, blank=True)
-    committed_at = models.DateTimeField(null=True, blank=True, db_index=True)
-    committed_by = models.CharField(max_length=100, null=True, blank=True)
-    committed = models.BooleanField(default=False)
-    base_path = models.CharField(max_length=255)
-    changes_path = models.CharField(max_length=255)
-
-    def save(self, *args, **kwargs):
-        if not self.name:  # Generate name if not provided
-            now = datetime.now()
-            self.name = f"Snapshot_{now.strftime('%m%d%y_%H%M%S')}"
         super().save(*args, **kwargs)
 
 class SnapshotConfig(BaseModel):
     name = models.CharField(max_length=255, blank=True)
+    url = models.CharField(max_length=255)
     path = models.CharField(max_length=255)
 
     def save(self, *args, **kwargs):
@@ -107,6 +83,26 @@ class SnapshotConfig(BaseModel):
             now = datetime.now()
             self.name = f"Snapshot_{now.strftime('%m%d%y_%H%M%S')}"
         super().save(*args, **kwargs)
+
+class CandidateConfig(BaseModel):
+    name = models.CharField(max_length=255, blank=True)
+    committed_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    committed_by = models.CharField(max_length=100, null=True, blank=True)
+    committed = models.BooleanField(default=False)
+    base_snapshot = models.ForeignKey(SnapshotConfig, on_delete=models.PROTECT, related_name="base_snapshots")
+    changes = JSONField(default=dict) 
+
+    def save(self, *args, **kwargs):
+        if not self.name:  # Generate name if not provided
+            now = datetime.now()
+            self.name = f"Candidate_{now.strftime('%m%d%y_%H%M%S')}"
+        if not self.pk:  # Check if it's a new instance
+            snapshot = SnapshotConfig.objects.create(path="root/")
+            self.base_snapshot = snapshot
+        super().save(*args, **kwargs)
+
+class AvailableOverlayIP(models.Model):
+    address=models.GenericIPAddressField(protocol='ipv4', unique=True, primary_key=True)
 
 # class Address(models.Model):
 #     street1 = models.CharField(max_length=255, verbose_name="Street Line 1", blank=True, null=True)
