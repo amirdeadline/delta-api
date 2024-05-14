@@ -1,4 +1,4 @@
-# delta_api project urls_tenants.py
+#delta_sase/urls_tenants.py
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
@@ -6,9 +6,9 @@ from django.http import HttpResponseServerError
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/v1/config/', include('base.urls')),
-    path('api/v1/resources/', include('resources_app.urls')),
+    # path('admin/', admin.site.urls),
+    path('config/', include('base.urls')),
+    path('resources/', include('resources_app.urls')),
     # path('network/sites/', include('sites_app.urls')),
     # path('network/devices/', include('devices_app.urls')),
     # path('dashboard/', include('dashboard_app.urls')),

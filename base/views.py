@@ -13,29 +13,37 @@ class BaseModelViewSet(viewsets.ModelViewSet):
     A base viewset that provides default 'create', 'retrieve', 'update', 'partial_update', 'destroy'
     and 'list' actions for models inheriting from BaseModel.
     """
-    # serializer_class = BaseModelSerializer
-    # queryset = BaseModel.objects.all()
+    serializer_class = BaseModelSerializer
+
+    # def get_queryset(self):
+    #     """
+    #     Assuming BaseModel is abstract and you are using this class only through inheritance,
+    #     you should override this method in child classes.
+    #     """
+    #     # return BaseModel.objects.none()  # Return none for safety, override this in child classes.
 
     def perform_create(self, serializer):
         try:
             serializer.save(created_by=self.request.user_id, modified_by=self.request.user_id)
-        except Exception as e:  # Consider specifying the exception type if possible
+            print(self.request.user_id)
+        except Exception as e:
             logger.error(f"Error during object creation: {str(e)}")
             raise APIException({'error': 'Error during creation', 'details': str(e)})
 
     def perform_update(self, serializer):
         try:
             serializer.save(modified_by=self.request.user_id)
-        except Exception as e:  # Consider specifying the exception type if possible
+        except Exception as e:
             logger.error(f"Error during object update: {str(e)}")
             raise APIException({'error': 'Error during update', 'details': str(e)})
 
     def destroy(self, request, *args, **kwargs):
         try:
-            return super(BaseModelViewSet, self).destroy(request, *args, **kwargs)
-        except Exception as e:  # Consider specifying the exception type if possible
+            return super().destroy(request, *args, **kwargs)
+        except Exception as e:
             logger.error(f"Error during object deletion: {str(e)}")
             raise APIException({'error': 'Error during deletion', 'details': str(e)})
+
 
 class AvailableOverlayIPViewSet(viewsets.ModelViewSet):
     queryset = AvailableOverlayIP.objects.all()
@@ -48,6 +56,7 @@ class CandidateConfigViewSet(BaseModelViewSet):
 class SnapshotConfigViewSet(BaseModelViewSet):
     queryset = SnapshotConfig.objects.all()
     serializer_class = SnapshotConfigSerializer
+
 
 class TenantSettingViewSet(viewsets.ModelViewSet):
     queryset = TenantSetting.objects.all()

@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import JSONField
 import uuid
 import time
+from datetime import datetime
 import random
 from threading import Lock
 from django.core.exceptions import ValidationError 
@@ -16,7 +17,8 @@ MACHINE_ID = os.environ.get('MACHINE_ID', '')
 
 OBJECT_TYPE_CODES = {
     'BaseModel': '00000',  # Override in subclasses with specific codes
-    'ooo': '00001',
+    'SnapshotConfig': '00001',
+    'CandidateConfig': '00002',
 }
 
 def generate_unique_id(object_type):
@@ -27,38 +29,31 @@ def generate_unique_id(object_type):
     return unique_id[:17]
 
 class Tag(models.Model):
-    key = models.CharField(max_length=100, unique=True)
-    value = models.JSONField()
+    key = models.CharField(max_length=100)
+    value = JSONField(blank=True, null=True, default=dict) 
+    object_id = models.BigIntegerField(editable=False)
 
     class Meta:
         indexes = [
-            models.Index(fields=['key']),
+            models.Index(fields=['object_id']),  
+            models.Index(fields=['key', 'object_id']),  
         ]
-
-    def __str__(self):
-        return f"{self.key}: {self.value}"
+        unique_together = [('key', 'object_id')]
         
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.CharField(max_length=100, null=True, blank=True)
+    created_by = models.CharField(max_length=100)
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=100, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, )
-    tags = models.ManyToManyField(Tag, blank=True, related_name="%(class)s_tags")
-    object_id = models.CharField(max_length=16, unique=True, editable=False, db_index=True)
+    # tags = models.ManyToManyField(Tag, blank=True, null=True, related_name="%(class)s_tags")
+    object_id = models.BigIntegerField(unique=True, editable=False, db_index=True)
 
     class Meta:
         abstract = True
 
     def save(self, *args, **kwargs):
-        user_id = kwargs.pop('user_id', None)  # Receive user_id from the view
-        if not self.pk:  # Object is being created
-            self.created_by = user_id
-        self.modified_by = user_id
-        if self.tags.count() > 5:
-            raise ValidationError("Maximum number of tags exceeded (5 tags allowed).")
-        if not self.object_id:
-            # Using the class name as the object type for ID generation
+        if not self.pk: 
             self.object_id = generate_unique_id(self.__class__.__name__)
         super().save(*args, **kwargs)
 
@@ -68,7 +63,6 @@ class BasePolymorphic(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     modified_by = models.CharField(max_length=100, null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, )
-    tags = models.ManyToManyField(Tag, blank=True, related_name="%(class)s_tags")
     object_id = models.CharField(max_length=16, unique=True, editable=False, db_index=True)
     objects = PolymorphicManager()
 
@@ -91,16 +85,28 @@ class AvailableOverlayIP(models.Model):
     address=models.GenericIPAddressField(protocol='ipv4', unique=True, primary_key=True)
 
 class CandidateConfig(BaseModel):
+    name = models.CharField(max_length=255, blank=True)
     committed_at = models.DateTimeField(null=True, blank=True, db_index=True)
     committed_by = models.CharField(max_length=100, null=True, blank=True)
     committed = models.BooleanField(default=False)
-    base_config = JSONField()
-    config_changes = JSONField()
+    base_path = models.CharField(max_length=255)
+    changes_path = models.CharField(max_length=255)
+
+    def save(self, *args, **kwargs):
+        if not self.name:  # Generate name if not provided
+            now = datetime.now()
+            self.name = f"Snapshot_{now.strftime('%m%d%y_%H%M%S')}"
+        super().save(*args, **kwargs)
 
 class SnapshotConfig(BaseModel):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True)
     path = models.CharField(max_length=255)
-    config = JSONField()
+
+    def save(self, *args, **kwargs):
+        if not self.name:  # Generate name if not provided
+            now = datetime.now()
+            self.name = f"Snapshot_{now.strftime('%m%d%y_%H%M%S')}"
+        super().save(*args, **kwargs)
 
 # class Address(models.Model):
 #     street1 = models.CharField(max_length=255, verbose_name="Street Line 1", blank=True, null=True)

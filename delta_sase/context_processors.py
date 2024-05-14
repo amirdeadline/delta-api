@@ -1,6 +1,6 @@
 #delta_api project context_processors.py
 from django.conf import settings as django_settings
-from delta_api.settings import TENANT_SUBFOLDER_PREFIX
+from delta_sase.settings import TENANT_SUBFOLDER_PREFIX
 
 def settings(request):
     return {

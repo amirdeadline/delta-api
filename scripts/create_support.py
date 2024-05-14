@@ -4,7 +4,7 @@ from termcolor import colored  # Added for colorizing output
 import subprocess
 
 # API endpoint
-API_ENDPOINT = "http://10.1.1.21:8053/api/v1/"
+API_ENDPOINT = "http://10.1.1.21:8053/"
 
 
 def run_generate_jwt_script():

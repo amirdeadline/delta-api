@@ -12,7 +12,7 @@ parser.add_argument("-d", "--delete", help="Delete a specific tenant by name or 
 args = parser.parse_args()
 
 # API endpoint
-API_ENDPOINT = "http://10.1.1.21:8053/api/v1/manage/"
+API_ENDPOINT = "http://10.1.1.21:8053/manage/"
 
 def load_jwt_token(file_path):
     """Load JWT token from a file."""

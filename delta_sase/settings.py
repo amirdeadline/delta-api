@@ -275,8 +275,15 @@ LOGGING = {
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
         },
+        'tenant_context': {
+            '()': 'django_tenants.log.TenantContextFilter'
+        },
     },
     'formatters': {
+        'tenant_context': {
+            'format': '[%(schema_name)s:%(domain_url)s] '
+            '%(levelname)-7s %(asctime)s %(message)s',
+        },
         'detailed': {
             'format': '{asctime} {levelname} {message}',
             'style': '{',
@@ -289,7 +296,7 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
+            'filters': ['require_debug_false', 'tenant_context'],
             'class': 'django.utils.log.AdminEmailHandler',
         },
         'file': {
@@ -302,7 +309,7 @@ LOGGING = {
         },
         'console': {
             'level': 'DEBUG',
-            'filters': ['require_debug_true'],
+            'filters': ['require_debug_true', 'tenant_context'],
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },

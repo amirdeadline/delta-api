@@ -13,7 +13,7 @@ parser.add_argument("-n", "--num_customers", type=int, help="Number of customers
 args = parser.parse_args()
 
 # API endpoint
-API_ENDPOINT = "http://10.1.1.21:8053/api/v1/manage/"
+API_ENDPOINT = "http://10.1.1.21:8053/manage/"
 
 def load_jwt_token(file_path):
     """Load JWT token from a file."""
