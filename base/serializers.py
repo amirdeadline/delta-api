@@ -20,9 +20,6 @@ class ErrorHandlingMixin:
             raise ValidationError({'error': 'Validation failed', 'details': e.detail})
 
 class BaseModelSerializer(ErrorHandlingMixin, serializers.ModelSerializer):
-    # tags = serializers.SerializerMethodField(required=False)
-    # tags = serializers.SerializerMethodField()
-
     tags = TagSerializer(many=True, required=False)
     object_id = serializers.CharField(read_only=True) 
     uuid = serializers.CharField(read_only=True) 
@@ -53,13 +50,6 @@ class BaseModelSerializer(ErrorHandlingMixin, serializers.ModelSerializer):
         instance = super().create(validated_data)
         self.update_or_create_tags(instance, tags_data)
         return instance
-
-    # def update(self, instance, validated_data):
-    #     tags_data = validated_data.pop('tags', [])
-    #     if len(tags_data)>0:
-    #         self.update_or_create_tags(instance, tags_data)
-    #     super().update(instance, validated_data)
-    #     return instance
 
     def update(self, instance, validated_data):
         tags_data = validated_data.pop('tags', [])

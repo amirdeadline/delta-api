@@ -14,7 +14,7 @@ class BaseModelViewSet(viewsets.ModelViewSet):
     and 'list' actions for models inheriting from BaseModel.
     """
     serializer_class = BaseModelSerializer
-
+    lookup_field = 'object_id'
     # def get_queryset(self):
     #     """
     #     Assuming BaseModel is abstract and you are using this class only through inheritance,
