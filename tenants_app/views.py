@@ -17,11 +17,12 @@ from .serializers import (ProductSerializer, ProductCategorySerializer, LicenseS
                           IKERPFSerializer, ESPEncryptionSerializer, ESPHashSerializer,
                           InterfaceTypeSerializer, InterfaceRoleSerializer, VRFRoleSerializer, LACPHashOptionSerializer, DeviceModelSerializer,
                           ESPDHGroupSerializer, ESPPFSSerializer, RoutingProtocolSerializer, SDWANSoftwareSerializer)
-
+import psycopg2
 from django.db import connection
-from django.db.utils import ProgrammingError
+# from django.db.utils import ProgrammingError
+# from .default_settings import copy_data_from_default
+from django.conf import settings
 import logging
-from .default_settings import copy_data_from_default
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,8 @@ class TenantViewSet(viewsets.ModelViewSet):
             domain = Domain(domain=str(tenant.tenant_id), tenant=tenant, is_primary=True)
             domain.save()
             # copy_data_from_default(tenant)  # Uncomment and handle this properly
+            
+            # self.create_initial_tenant_setting(tenant.schema_name)
             logger.info(f"Created new Tenant {tenant.name} with domain {domain.domain}")
         except Exception as e:
             logger.error(f"Failed to create tenant or domain: {str(e)}")

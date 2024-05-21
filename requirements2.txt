@@ -21,3 +21,4 @@ requests
 django-polymorphic
 ipaddress
 pyjwt
+django-tenant-users

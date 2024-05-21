@@ -73,36 +73,8 @@ class BasePolymorphic(models.Model):
             self.object_id = generate_unique_id(self.__class__.__name__)
         super().save(*args, **kwargs)
 
-class SnapshotConfig(BaseModel):
-    name = models.CharField(max_length=255, blank=True)
-    url = models.CharField(max_length=255)
-    path = models.CharField(max_length=255)
-
-    def save(self, *args, **kwargs):
-        if not self.name:  # Generate name if not provided
-            now = datetime.now()
-            self.name = f"Snapshot_{now.strftime('%m%d%y_%H%M%S')}"
-        super().save(*args, **kwargs)
-
-class CandidateConfig(BaseModel):
-    name = models.CharField(max_length=255, blank=True)
-    committed_at = models.DateTimeField(null=True, blank=True, db_index=True)
-    committed_by = models.CharField(max_length=100, null=True, blank=True)
-    committed = models.BooleanField(default=False)
-    base_snapshot = models.ForeignKey(SnapshotConfig, on_delete=models.PROTECT, related_name="base_snapshots")
-    changes = JSONField(default=dict) 
-
-    def save(self, *args, **kwargs):
-        if not self.name:  # Generate name if not provided
-            now = datetime.now()
-            self.name = f"Candidate_{now.strftime('%m%d%y_%H%M%S')}"
-        if not self.pk:  # Check if it's a new instance
-            snapshot = SnapshotConfig.objects.create(path="root/")
-            self.base_snapshot = snapshot
-        super().save(*args, **kwargs)
-
-class AvailableOverlayIP(models.Model):
-    address=models.GenericIPAddressField(protocol='ipv4', unique=True, primary_key=True)
+# class AvailableOverlayIP(models.Model):
+#     address=models.GenericIPAddressField(protocol='ipv4', unique=True, primary_key=True)
 
 # class Address(models.Model):
 #     street1 = models.CharField(max_length=255, verbose_name="Street Line 1", blank=True, null=True)
@@ -126,10 +98,3 @@ class AvailableOverlayIP(models.Model):
 
 #     def __str__(self):
 #         return self.name
-
-class TenantSetting(models.Model):
-    key = models.CharField(max_length=100, primary_key=True, unique=True, db_index=True)
-    value = models.CharField(max_length=255)
-
-    def __str__(self):
-        return f"{self.key}: {self.value}"

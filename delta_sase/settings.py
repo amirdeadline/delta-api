@@ -189,6 +189,8 @@ TENANT_APPS = (
     'django.contrib.messages',
     'base',
     'resources_app',
+    'settings_app',
+    'config',
     # 'sites_app',
     # 'devices_app',
     # 'interfaces_app',

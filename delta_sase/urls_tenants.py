@@ -7,8 +7,9 @@ from django.http import HttpResponseServerError
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('config/', include('base.urls')),
-    path('resources/', include('resources_app.urls')),
+    path('config/', include('config.urls')),
+    path('settings/', include('settings_app.urls')),
+    # path('resources/', include('resources_app.urls')),
     # path('network/sites/', include('sites_app.urls')),
     # path('network/devices/', include('devices_app.urls')),
     # path('dashboard/', include('dashboard_app.urls')),
@@ -17,7 +18,6 @@ urlpatterns = [
     # path('profiles/', include('profiles_app.urls')),
     # path('objects/', include('objects_app.urls')),
     # path('templates/', include('templates_app.urls')),
-    # path('settings/', include('settings_app.urls')),
     # path('policies/security', include('security_policies_app.urls')),
     # path('policies/qos', include('qos_policies_app.urls')),
     # path('policies/nat', include('nat_policies_app.urls')),

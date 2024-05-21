@@ -189,7 +189,7 @@ class TenantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tenant
         fields = '__all__'
-        read_only_fields = ('schema_name', 'tenant_id')  # Make these fields read-only
+        read_only_fields = ('id', 'schema_name', 'tenant_id')  # Make these fields read-only
 
     def create(self, validated_data):
         admins_data = validated_data.pop('admins', [])

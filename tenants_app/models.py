@@ -44,7 +44,7 @@ class ShareTag(models.Model):
         return f"{self.key}: {self.value}"
 
 class SDWANSoftware(ShareBase):
-    tags = models.ManyToManyField(ShareTag, related_name='sdwan_software_tags', null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='sdwan_software_tags', blank=True)
     production = models.BooleanField(default=True)
     url= models.URLField()
 
@@ -55,7 +55,7 @@ class Product(ShareBase):
     unit = models.CharField(max_length=100, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     category = models.ForeignKey('ProductCategory', on_delete=models.SET_NULL, null=True, blank=True)
-    tags = models.ManyToManyField(ShareTag, related_name='products_tags', null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='products_tags', blank=True)
     
     def __str__(self):
         return self.name
@@ -70,14 +70,14 @@ class ProductCategory(ShareBase):
 class License(ShareBase):
     unit = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    tags = models.ManyToManyField(ShareTag, related_name='licenses', null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='licenses', blank=True)
     
     def __str__(self):
         return self.name
 
 class Region(ShareBase):
     cloud = models.CharField(max_length=100)
-    tags = models.ManyToManyField(ShareTag, related_name='regions', null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='regions', blank=True)
     
     def __str__(self):
         return self.name
@@ -91,7 +91,7 @@ class SCE(ShareBase):
     certificate = models.TextField()
     enabled = models.BooleanField(default=True)
     dedicated = models.BooleanField(default=False)
-    tags = models.ManyToManyField(ShareTag, related_name='sces', null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='sces', blank=True)
     
     def __str__(self):
         return self.name
@@ -105,7 +105,7 @@ class SASEController(ShareBase):
     certificate = models.TextField()
     enabled = models.BooleanField(default=True)
     dedicated = models.BooleanField(default=False)
-    tags = models.ManyToManyField(ShareTag, related_name='sase_controllers', null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='sase_controllers', blank=True)
     
     def __str__(self):
         return self.name
@@ -119,7 +119,7 @@ class SDWANController(ShareBase):
     certificate = models.TextField()
     enabled = models.BooleanField(default=True)
     dedicated = models.BooleanField(default=False)
-    tags = models.ManyToManyField(ShareTag, related_name='sdwan_controllers', null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='sdwan_controllers', blank=True)
     
     def __str__(self):
         return self.name
@@ -129,7 +129,7 @@ class Contact(ShareBase):
     email = models.EmailField(max_length=200)
     number = models.CharField(max_length=15, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
-    tags = models.ManyToManyField(ShareTag, related_name='contacts_tags', null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='contacts_tags', blank=True)
     name = models.CharField(max_length=255)
 
     class Meta:
@@ -142,7 +142,7 @@ class Customer(models.Model):
     name = models.CharField(unique=True, max_length=200, db_index=True)
     company_name = models.CharField(max_length=200, null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    tags = models.ManyToManyField(ShareTag, related_name='customers_tags', null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='customers_tags', blank=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -171,7 +171,7 @@ class Tenant(TenantMixin):
     products = models.ManyToManyField(Product, related_name='tenant_products')
     licenses = models.ManyToManyField(License, related_name='tenant_licenses')
     softwares = models.ManyToManyField(SDWANSoftware, related_name='tenant_softwares')
-    tags = models.ManyToManyField(ShareTag, related_name='tenants_tags', null=True, blank=True)
+    tags = models.ManyToManyField(ShareTag, related_name='tenants_tags', blank=True)
     config = models.URLField(blank=True)
     auto_drop_schema = True
 
@@ -199,7 +199,7 @@ class Tenant(TenantMixin):
                         self.tenant_id = 1
                     else:
                         self.tenant_id = max_id + 1
-                    self.schema_name = 'Tenant_' + str(self.tenant_id)
+                    self.schema_name = 'tenant_' + str(self.tenant_id)
                     
             super(Tenant, self).save(*args, **kwargs)
         except Exception as e:

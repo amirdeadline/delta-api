@@ -1,6 +1,6 @@
 # base/serializers.py
 from rest_framework import serializers
-from .models import Tag, AvailableOverlayIP, BaseModel, CandidateConfig, SnapshotConfig, TenantSetting
+from .models import Tag, BaseModel
 from django.core.exceptions import ValidationError
 import logging
 
@@ -74,32 +74,6 @@ class BaseModelSerializer(ErrorHandlingMixin, serializers.ModelSerializer):
                 defaults={'value': tag_data.get('value', {})}
             )
 
-class SnapshotConfigSerializer(BaseModelSerializer):
-    class Meta(BaseModelSerializer.Meta):
-        model = SnapshotConfig
-        exclude = BaseModelSerializer.Meta.exclude + ['url']
-
-class CandidateConfigSerializer(BaseModelSerializer):
-    base_snapshot = serializers.SerializerMethodField(read_only=True)
-
-    class Meta(BaseModelSerializer.Meta):
-        model = CandidateConfig
-        read_only_fields = BaseModelSerializer.Meta.read_only_fields + ['base_snapshot','base_path', 'committed_by', 'committed_at']
-        exclude = BaseModelSerializer.Meta.exclude
-
-    def get_base_snapshot(self, obj):
-        if obj.base_snapshot:
-            return obj.base_snapshot.object_id
-        return None
-
-class AvailableOverlayIPSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AvailableOverlayIP
-        fields = '__all__'
-
-
-
-
 # class AddressSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Address
@@ -110,13 +84,7 @@ class AvailableOverlayIPSerializer(serializers.ModelSerializer):
 #         model = Contact
 #         # exclude = ['id']
 
-class SettingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TenantSetting
-        # exclude = ['id']
-
-class TenantSettingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TenantSetting
-        fields = ['key', 'value']
-        
+# class AvailableOverlayIPSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = AvailableOverlayIP
+#         fields = '__all__'

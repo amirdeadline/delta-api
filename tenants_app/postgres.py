@@ -41,5 +41,5 @@ def execute_query(ip, port, username, password, db_name, schema_name, query):
 # execute_query('192.168.172.71', 5433, 'admin', 'admin', 'delta98', 'Tenant_1001',
 #  "SELECT * FROM information_schema.tables WHERE table_schema = 'Tenant_1001' AND table_name = 'interfaces_app_interfacetype';")
 
-execute_query('192.168.172.71', 5433, 'admin', 'admin', 'delta98', 'Tenant_1001',
+execute_query('10.1.1.21', 5432, 'admin', 'admin', 'postgress', 'Tenant_1001',
  'select * from "Tenant_1001"."interfaces_app_interfacetype"')
